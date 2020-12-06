@@ -12,6 +12,10 @@ from configparser import ConfigParser
 import os.path, sys
 
 
+
+
+
+
 class SPGSettings(dict):
     # :::~ class that allows to take the values as items
     # :::~ http://stackoverflow.com/questions/1325673/python-how-to-add-property-to-a-class-dynamically
@@ -24,10 +28,6 @@ class SPGSettings(dict):
         for k in self.keys():
             ret += "%s = %s\n" % (k, self[k])
         return ret
-
-
-
-
 #
 # def load_configuration(config_filename, filter_keys = None):
 #     """

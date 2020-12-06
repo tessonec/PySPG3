@@ -41,7 +41,7 @@ def consistency(exec_file, miparser):
     except:
         possible_lines = read_input_configuration("%s/spg-conf/%s.input" % (CONFIG_DIR, exec_file))
 
-    assert len(set(miparser.items() ) - set( possible_lines.keys() ) ) == 0 , "not all the variables are recognised: offending vars: %s"%(set( miparser.items() ) -set( possible_lines.keys() )  )
+    assert len(set(miparser.names ) - set( possible_lines.keys() ) ) == 0 , "not all the variables are recognised: offending vars: %s"%(set( miparser.names ) -set( possible_lines.keys() )  )
   #  print(possible_lines)
   #  print(miparser.data)
 

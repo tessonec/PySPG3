@@ -81,6 +81,8 @@ class MultIteratorList(MultIteratorParser):
         return ret
 
     def get_row(self, return_values, only_varying = True):
+#        print(">>>>",  return_values)
+#        print(">>>>", self.stdout_configuration.keys())
         assert set(return_values.keys()) == set( self.stdout_configuration.keys() )
 
         ret = return_values.copy()
@@ -96,6 +98,20 @@ class MultIteratorList(MultIteratorParser):
 
 
 
+    def __getitem__(self, name):
+      """ the values of the multiterator are supposed to be accessed
+      only by the operator[] (or by the returned value of next()
+      """
+#      print name, self.names
+#      if name == "id":
+#          return self.current_iteration_id
+
+
+      assert name in self.input_configuration.keys() , "the requested variable '%s' was not found in the multiterator"%name
+      ret = MultIteratorParser.__getitem__(self, name)
+      if self.input_configuration[name].var_type != 'str':
+          ret = eval(f"{self.input_configuration[name].var_type}({ret})")
+      return ret
 
 
 
