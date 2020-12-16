@@ -125,7 +125,7 @@ class SPGBasePlotter:
 
                 minimal_idx = df_coalesced.groups[minimal_gr]
 
-                minimal_df = self.df.ix[minimal_idx]
+                minimal_df = self.df.iloc[minimal_idx]
 
                 if not isinstance(minimal_gr, type((0,))):
                     minimal_gr = [minimal_gr]
@@ -241,7 +241,7 @@ class SPGBasePlotter:
             for local_gr in sorted(df_separated.groups):
                 local_idx = df_separated.groups[local_gr]
 
-                local_df = self.df.ix[local_idx]
+                local_df = self.df.iloc[local_idx]
 
                 # sets-up title
                 if not isinstance(local_gr, type((0,))):
@@ -341,7 +341,7 @@ class SPGBasePlotter:
             for local_gr in sorted(df_separated.groups):
                 local_idx = df_separated.groups[local_gr]
 
-                local_df = self.df.ix[local_idx]
+                local_df = self.df.iloc[local_idx]
 
                 # sets-up title
                 if not isinstance(local_gr, type((0,))):
@@ -395,7 +395,7 @@ class SPGBasePlotter:
         for local_gr in  sorted( df_separated.groups):
             local_idx = df_separated.groups[local_gr]
 
-            local_df = self.df.ix[ local_idx ]
+            local_df = self.df.iloc[ local_idx ]
 
             # sets-up title
             if not isinstance(local_gr, type((0,))):
@@ -456,7 +456,7 @@ class SPGBaseSubPlotter(SPGBasePlotter):
         for local_gr in sorted(df_separated.groups):
 
             local_idx = df_separated.groups[local_gr]
-            local_df = self.df.ix[local_idx]
+            local_df = self.df.iloc[local_idx]
 
             # sets-up title
             if not isinstance(local_gr, type((0,))):
@@ -539,7 +539,7 @@ class SPGAbstractPlotter:
 
             minimal_idx = df_coalesced.groups[minimal_gr]
 
-            minimal_df = self.df.ix[minimal_idx]
+            minimal_df = self.df.iloc[minimal_idx]
 
             if not isinstance(minimal_gr, type((0,))):
                 minimal_gr = [minimal_gr]
@@ -611,7 +611,7 @@ class SPGAbstractPlotter:
             for local_gr in sorted(df_separated.groups):
                 local_idx = df_separated.groups[local_gr]
 
-                local_df = self.df.ix[local_idx]
+                local_df = self.df.iloc[local_idx]
 
                 # sets-up title
                 if not isinstance(local_gr, type((0,))):
@@ -708,7 +708,7 @@ class SPGAbstractPlotter:
             for local_gr in sorted(df_separated.groups):
                 local_idx = df_separated.groups[local_gr]
 
-                local_df = self.df.ix[local_idx]
+                local_df = self.df.iloc[local_idx]
 
                 # sets-up title
                 if not isinstance(local_gr, type((0,))):
@@ -762,7 +762,7 @@ class SPGAbstractPlotter:
         for local_gr in sorted(df_separated.groups):
             local_idx = df_separated.groups[local_gr]
 
-            local_df = self.df.ix[local_idx]
+            local_df = self.df.iloc[local_idx]
 
             # sets-up title
             if not isinstance(local_gr, type((0,))):

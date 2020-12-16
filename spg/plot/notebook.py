@@ -197,14 +197,16 @@ class SPGDataLoader(BaseDataLoader):
      self.constants
     """
 
-    def __init__(self, simulation_filename, table_name ="results"):
+    def __init__(self, exec_name, simulation_filename):
 
         self.simulation = spgb.MultIteratorParser(open(simulation_filename))
+        self.simulation.command = exec_name
 
         self.simulation_filename = simulation_filename
 
         self.base_name, foo = os.path.splitext(self.simulation_filename)
-        self.datafile_name = "%s_%s.csv"%(self.base_name, table_name)
+#        self.datafile_name = "%s_%s.csv"%(self.base_name, table_name)
+        self.datafile_name = "%s.csv"%(self.base_name)
 
         self.full_dataframe = pd.read_csv(self.datafile_name)
 

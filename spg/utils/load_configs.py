@@ -173,7 +173,7 @@ def read_output_configuration(exec_file):
             try:
                 k, v = o.split("=")
             except:
-                newline_msg("FATAL", "processing '%s', line: '%s', field: '%s'" % (cfgFile, line, o))
+                newline_msg("FATAL", "processing '%s', line: '%s', field: '%s'" % (cfgFile, l, o))
                 sys.exit(1)
             k = k.strip()
             v = v.strip()

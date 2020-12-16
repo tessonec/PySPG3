@@ -27,7 +27,7 @@ class SPGPlotter:
         self.base_name , foo = os.path.splitext(parameter_file)
         
         self.mit = spgb.MultIteratorParser( open(parameter_file) )
-        self.variables = self.mit.varying_items()
+        self.variables = self.mit.varying_parameters()
         
         try:
             self.settings, foo =  self.get_settings(self.mit.command, "input")
@@ -156,7 +156,7 @@ class SPGPlotter:
     def plot_all(self, Plotter):
         newline_msg("INF", "%s - %s - %s" % (self.separated_vars, self.coalesced_vars, self.x_axis))
 
-        table_name = self.base_name + "_results.csv"
+        table_name = self.base_name + ".csv"
         ctp = Plotter(table_name)
 
         ctp.x_axis = self.x_axis
