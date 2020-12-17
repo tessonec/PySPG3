@@ -14,15 +14,16 @@ class MultIteratorList(MultIteratorParser):
     # - self.input_configuration     is the dict (SPGSettings) of the input configuration
     # - self.stdout_configuration    is the dict (SPGSettings) of the output configuration
     # = self.names =     contains all variables in the right order
+    # - varying_parameters = returns only the varying parameters
 
-    def __init__(self, argv):
+    def __init__(self, command, arg):
 
 
-        full_name, self.path, self.base_name, extension = utils.translate_name(argv[1])
+        full_name, self.path, self.base_name, extension = utils.translate_name(arg)
 
         MultIteratorParser.__init__(self, open(f"{self.base_name}.spg"))
 
-        self.command, ext = os.path.splitext(argv[0])
+        self.command, ext = os.path.splitext(command)
 
 
 
