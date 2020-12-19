@@ -95,7 +95,10 @@ class SPGBasePlotter:
 
         self.df = pd.read_csv(table_name)
 
+    def mean(self):
+        self.df = self.df.groupby(self.separated_vars + self.coalesced_vars + [self.x_axis]).mean().reset_index()
 
+        #print(self.df['tau_nd'])
 
 
     def get_transformed_var(self, var, keep_tex = False):
@@ -531,7 +534,7 @@ class SPGAbstractPlotter:
 
     def add_curves(self, local_df, curr_y_axis, subp, legend_prepend=""):
 
-        df_coalesced = local_df.groupby(self.coalesced_vars)
+        df_coalesced = local_df.groupby(self.coalesced_vars).mean()
 
         color_it = itertools.cycle(self.colors)
         marker_it = itertools.cycle(self.markers)

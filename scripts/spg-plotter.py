@@ -153,8 +153,10 @@ class SPGPlotter:
         self.coalesced_vars = all_vars
         self.separated_vars = sv
 
-    def plot_all(self, Plotter):
+    def plot_all(self, Plotter, mean):
         newline_msg("INF", "%s - %s - %s" % (self.separated_vars, self.coalesced_vars, self.x_axis))
+
+
 
         table_name = self.base_name + ".csv"
         ctp = Plotter(table_name)
@@ -177,10 +179,12 @@ class SPGPlotter:
         plot_fname += ".pdf"
 
         newline_msg("OUT", plot_fname)
+        if mean:
+            ctp.mean()
         ctp.plot_all(output_name=plot_fname)
 
 
-    def plot_all_join_outputs(self, Plotter):
+    def plot_all_join_outputs(self, Plotter, mean):
         newline_msg("INF", "%s - %s - %s" % (self.separated_vars, self.coalesced_vars, self.x_axis))
 
         table_name = self.base_name + "_results.csv"
@@ -204,6 +208,8 @@ class SPGPlotter:
         plot_fname += ".pdf"
 
         newline_msg("OUT", plot_fname)
+        if mean:
+            ctp.mean()
         ctp.plot_all_join_outputs(output_name=plot_fname)
 
 
@@ -242,6 +248,10 @@ def parse_command_line():
                        default=[],
                        help="join all y columns")
 
+     parser.add_option("--mean", action='store_true', dest="mean",
+                       default=[],
+                       help="averages")
+
      opts, args = parser.parse_args()
      if len( opts.coalesced ) >0:
          opts.coalesced = opts.coalesced.split(",")
@@ -268,7 +278,9 @@ for iarg in args:
     if len(opts.output) > 0:
         plotter.setup_output_columns( opts.output )
 
+
+
     if not opts.join:
-        plotter.plot_all(spgp.SPGBasePlotter)
+        plotter.plot_all(spgp.SPGBasePlotter, opts.mean)
     else:
-        plotter.plot_all_join_outputs(spgp.SPGBasePlotter)
+        plotter.plot_all_join_outputs(spgp.SPGBasePlotter, opts.mean)
