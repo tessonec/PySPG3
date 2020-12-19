@@ -51,6 +51,6 @@ setup(name='PySPG',
       zip_safe=False,
       install_requires=install_requires,
       scripts=['scripts/spg-db.py', 'scripts/spg-plotter.py',
-               'scripts/spg-run-standalone.py',
+               'scripts/spg-run-standalone.py','scripts/spg-csv.py',
                'scripts/spg-run-threaded.py', 'scripts/spg-table.py'],
       test_suite='tests')

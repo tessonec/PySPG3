@@ -16,14 +16,16 @@ class MultIteratorList(MultIteratorParser):
     # = self.names =     contains all variables in the right order
     # - varying_parameters = returns only the varying parameters
 
-    def __init__(self, command, arg):
+    def __init__(self, arg, command = None):
 
 
         full_name, self.path, self.base_name, extension = utils.translate_name(arg)
 
         MultIteratorParser.__init__(self, open(f"{self.base_name}.spg"))
+        if command is not None:
+            self.command = command
 
-        self.command, ext = os.path.splitext(command)
+        self.command, ext = os.path.splitext(self.command)
 
 
 
