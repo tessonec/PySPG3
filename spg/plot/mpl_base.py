@@ -98,6 +98,10 @@ class SPGBasePlotter:
     def mean(self):
         self.df = self.df.groupby(self.separated_vars + self.coalesced_vars + [self.x_axis]).mean().reset_index()
 
+    def std(self):
+        self.df = self.df.groupby(self.separated_vars + self.coalesced_vars + [self.x_axis]).std().reset_index()
+
+
         #print(self.df['tau_nd'])
 
 

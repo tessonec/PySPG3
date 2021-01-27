@@ -153,7 +153,7 @@ class SPGPlotter:
         self.coalesced_vars = all_vars
         self.separated_vars = sv
 
-    def plot_all(self, Plotter, mean):
+    def plot_all(self, Plotter, mean, std):
         newline_msg("INF", "%s - %s - %s" % (self.separated_vars, self.coalesced_vars, self.x_axis))
 
 
@@ -181,6 +181,8 @@ class SPGPlotter:
         newline_msg("OUT", plot_fname)
         if mean:
             ctp.mean()
+        if std:
+            ctp.std()
         ctp.plot_all(output_name=plot_fname)
 
 
@@ -252,6 +254,11 @@ def parse_command_line():
                        default=[],
                        help="averages")
 
+
+     parser.add_option("--std", action='store_true', dest="std",
+                       default=[],
+                       help="averages")
+
      opts, args = parser.parse_args()
      if len( opts.coalesced ) >0:
          opts.coalesced = opts.coalesced.split(",")
@@ -281,6 +288,6 @@ for iarg in args:
 
 
     if not opts.join:
-        plotter.plot_all(spgp.SPGBasePlotter, opts.mean)
+        plotter.plot_all(spgp.SPGBasePlotter, opts.mean, opts.std)
     else:
-        plotter.plot_all_join_outputs(spgp.SPGBasePlotter, opts.mean)
+        plotter.plot_all_join_outputs(spgp.SPGBasePlotter, opts.mean, opts.std)
