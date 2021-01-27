@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 from model import CascadeWattsModel
-
-
+import networkx as nx
 import sys
 
 import numpy as np
@@ -40,9 +39,9 @@ def run_simulation(_p):
 
     amean = _p["threshold_mean"]
     astd = _p["threshold_std"]
-    if _p["buyer_alpha_distribution"] == "uniform":
+    if _p["threshold_distribution"] == "uniform":
         threshold_vec = nprnd.uniform(amean - m.sqrt(3) * astd, amean + m.sqrt(3) * astd,no_agents)
-    elif _p["buyer_alpha_distribution"] == "normal":
+    elif _p["threshold_distribution"] == "normal":
         threshold_vec = nprnd.normal(amean, astd, no_agents)
 
 
