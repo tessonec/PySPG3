@@ -230,7 +230,7 @@ class SPGBasePlotter:
                     if 'scale' in self.settings[self.x_axis]:
                         curr_axes.set_xscale(self.settings[self.x_axis]['scale'])
 
-
+                print("TL plot")
                 plt.tight_layout()
                 plt.savefig(pp, format='pdf')
                 plt.clf()
@@ -288,9 +288,10 @@ class SPGBasePlotter:
                             plt.xlim(self.settings[self.x_axis]['lim'])
                         if 'scale' in self.settings[self.x_axis]:
                             curr_axes.set_xscale(self.settings[self.x_axis]['scale'])
-                    plt.savefig(pp, format='pdf')
-                    # print
+                    
                     plt.tight_layout()
+                    plt.savefig(pp, format='pdf', bbox_inches='tight')
+                    #print("TL2 adasd")
                     plt.clf()
 
         pp.close()
