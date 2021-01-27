@@ -1,0 +1,8 @@
+no_agents:type=int:default=100:help=number of agents
+network_topology:type=str:categories=["erdos_renyi","barabasi_albert"]
+network_ba_m:type=int:default=1:help=barabasi albert network, number of links
+network_er_p:type=float:default=0.3:help=erdos renyi network, link probability
+threshold_distribution:type=str:categories=["uniform","normal"]
+threshold_mean:type=float:default=0.5:label=$\phi$
+threshold_std:type=float:default=0.
+p0:type=float:default=0.1

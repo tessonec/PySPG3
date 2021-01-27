@@ -27,7 +27,7 @@ class SPGPlotter:
         self.base_name , foo = os.path.splitext(parameter_file)
         
         self.mit = spgb.MultIteratorParser( open(parameter_file) )
-        self.variables = self.mit.varying_parameters()
+        self.variables = self.mit.get_variables()
         
         try:
             self.settings, foo =  self.get_settings(self.mit.command, "input")

@@ -52,10 +52,10 @@ class MultIteratorList(MultIteratorParser):
 #        print(self.stdout_contents)
 
 
-    def generate_ensemble(self, all = False):
+    def generate_ensemble(self, all = False, repeat = None):
         # generates all possible combinations
 
-        ret = [ utils.SPGSettings({j:self[j] for j in self.names } ) for i in self ]
+        ret = [ {j:self[j] for j in self.names } for i in self ]
 
         if all:
             additional_values = { k: self.default_parameters[k]
@@ -64,11 +64,14 @@ class MultIteratorList(MultIteratorParser):
             for _ in ret:
                 _.update( additional_values )
 
+        if repeat is not None:
+            ret = repeat * ret
+
         return ret
 
     def get_csv_header(self, only_varying = True):
         if only_varying:
-            return self.varying_parameters() + list(self.stdout_configuration.keys())
+            return self.get_variables() + list(self.stdout_configuration.keys())
         else:
             return self.names + list( self.stdout_configuration.keys() )
 
@@ -91,7 +94,7 @@ class MultIteratorList(MultIteratorParser):
         ret = return_values.copy()
 
         if only_varying:
-            ret.update( {_:self[_] for _ in self.varying_parameters() }  )
+            ret.update({_:self[_] for _ in self.get_variables()})
 #            return self.varying_parameters() + list(self.stdout_configuration.keys())
         else:
             ret.update({_: self[_] for _ in self.names })

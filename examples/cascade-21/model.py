@@ -30,6 +30,7 @@ class CascadeWattsModel:
         for _ag in self.__agents:
             if self.state[_ag] == True:
                 continue
+            if self.network.degree(_ag) == 0: continue
             no_active_neighs = np.sum( [self.state[_neigh] for _neigh in self.network.neighbors(_ag) ])
             if no_active_neighs/self.network.degree(_ag) > self.threshold[_ag]:
                 self.state[_ag] = True

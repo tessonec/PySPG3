@@ -294,7 +294,7 @@ class MultIterator:
 #  def items(self):
 #      return self.names
 
-  def varying_parameters(self):
+  def get_variables(self):
       return [i.name for i in self.data if i.__class__ != IterConstant  ]
 
   def constant_parameters(self):

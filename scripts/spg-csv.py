@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
         import pickle
 
-        varying_parameters = mil.varying_parameters()
+        varying_parameters = mil.get_variables()
         pickle.dump((varying_parameters, csv_header), open(f"{mil.base_name}_configuration.pickle", "wb"))
 #        pickle.dump(csv_header, open(f"{mil.base_name}_output_columns.pickle", "wb"))
 
