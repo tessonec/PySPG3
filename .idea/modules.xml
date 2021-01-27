@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/PySPG3.iml" filepath="$PROJECT_DIR$/.idea/PySPG3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../blockchain-abm/.idea/selfish_mining_abm.iml" filepath="$PROJECT_DIR$/../blockchain-abm/.idea/selfish_mining_abm.iml" />
     </modules>
   </component>
 </project>
