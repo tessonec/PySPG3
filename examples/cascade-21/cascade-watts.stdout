@@ -1,0 +1,2 @@
+cascade_size:help = fraction of nodes in state 1:label=Cascade Size $S$:scale = linear
+convergence_time:help = time for equilibrium:label=Convergence Time:scale = linear
