@@ -18,8 +18,6 @@ class SingleRunner:
         self.all_csv_fields = mil.get_csv_header()
         self.variables = mil.get_variables()
 
-    In[29]:
-
     def filter(self, s):
         s = s.replace("{", "_['").replace("}", "']")
         old_len = len(self.parameters)
