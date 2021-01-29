@@ -18,6 +18,15 @@ class SingleRunner:
         self.all_csv_fields = mil.get_csv_header()
         self.variables = mil.get_variables()
 
+    In[29]:
+
+    def filter(self, s):
+        s = s.replace("{", "_['").replace("}", "']")
+        old_len = len(self.parameters)
+        self.parameters = [_ for _ in self.parameters if eval(s)]
+        print(f"   ... the parameter set was filtered from {old_len} to {len(self.parameters)} ")
+
+
     def run(self, run_simulation,workers= None):
 
         print(f"running {self.simulation} ... for {len(self.parameters)} iterations")
