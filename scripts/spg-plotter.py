@@ -251,7 +251,7 @@ def parse_command_line():
                        help="join all y columns")
 
      parser.add_option("--mean", action='store_true', dest="mean",
-                       default=[],
+                       default=None,
                        help="averages")
 
 

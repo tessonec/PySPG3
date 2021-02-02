@@ -217,14 +217,17 @@ class SPGBasePlotter:
 
 
                 if not yaxis_lim_set:
-                    yseries = df_separated[[curr_y_axis]]
-                    if yaxis_scale == 'lin':
+                    yseries = df_separated[curr_y_axis]
+
+                    if yaxis_scale == 'linear':
                         rng = yseries.max()-yseries.min()
                         yscale = yseries.min()-rng*0.05, yseries.max()+rng*0.05
                     else:
                         yscale = yseries[yseries > 0].min()*0.9, yseries[yseries > 0].max()*1.1
 
-                    curr_axes.set_yscale(yscale)
+#                    print(yscale)
+
+                    plt.ylim(yscale)
 
 
 
@@ -234,9 +237,9 @@ class SPGBasePlotter:
                     if 'scale' in self.settings[self.x_axis]:
                         curr_axes.set_xscale(self.settings[self.x_axis]['scale'])
 
-                print("TL plot")
-                plt.tight_layout()
-                plt.savefig(pp, format='pdf')
+ #               print("TL plot")
+#                plt.tight_layout()
+                plt.savefig(pp, format='pdf', bbox_inches='tight')
                 plt.clf()
 
 
