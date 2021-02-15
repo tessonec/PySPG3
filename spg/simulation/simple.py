@@ -7,7 +7,7 @@ import sys
 
 
 class MultIteratorList(MultIteratorParser):
-    # In this clase:
+    # In this class:
     # - self.command     contains the name of the executed file (from which input and stdout are derived)
     # - self.base_name   contains the name of the simulation (iterated) parameters
     # - self.default_parameters is the dict (SPGSettings) of default values of all parameters
