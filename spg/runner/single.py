@@ -8,7 +8,7 @@ import csv
 class SingleRunner:
 
 
-    def __init__(self, simulation, repeat):
+    def __init__(self, simulation, repeat = 1):
         self.fbase, fext= os.path.splitext(simulation)
         mil = MultIteratorList(simulation)
         self.simulation = simulation
@@ -65,5 +65,20 @@ class SingleRunner:
                 _o[_v] = _p[_v]
             writer.writerow(_o)
 
+    def get_data(self, mean=False):
 
+        import pandas as pd
+        orecs = []
+        for (_p,_r) in zip(self.parameters, self.results):
+            _o = _r.copy()
+            for _v in self.variables:
+                _o[_v] = _p[_v]
+            orecs.append( _o )
+
+        df = pd.DataFrame.from_records(orecs)
+        if mean:
+            df = df.groupby(self.variables).mean().reset_index()
+
+
+        return df
 

@@ -4,7 +4,7 @@ Created on Aug 30, 2011
 @author: tessonec
 '''
 
-from spg import CONFIG_DIR
+#from spg import CONFIG_DIR
 from .tools import * 
 #from .check_params import *
 
@@ -80,10 +80,10 @@ def read_input_configuration(exec_file):
     """ Imports the backends used in a base.ct file """
 
     exec_file, ext = os.path.splitext(exec_file)
-    try:
-        cfgFile = f"{exec_file}.input"
-    except:
-        cfgFile = f"{CONFIG_DIR}/spg-conf/{exec_file}.input"
+#    try:
+    cfgFile = f"{exec_file}.input"
+#    except:
+#        cfgFile = f"{CONFIG_DIR}/spg-conf/{exec_file}.input"
 
 
 
@@ -147,10 +147,10 @@ def read_output_configuration(exec_file):
     #    if exec_file[:2] == "ct" and exec_file[3] == "-" :  exec_file = exec_file[4:]
     ret = {}
     exec_file, ext = os.path.splitext(exec_file)
-    try:
-        cfgFile = f"{exec_file}.stdout"
-    except:
-        cfgFile = f"{CONFIG_DIR}/spg-conf/{exec_file}.stdout"
+    #try:
+    cfgFile = f"{exec_file}.stdout"
+    #except:
+    #    cfgFile = f"{CONFIG_DIR}/spg-conf/{exec_file}.stdout"
 
 
 

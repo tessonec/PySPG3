@@ -1,5 +1,5 @@
 from spg import utils
-from spg import TIMEOUT, BINARY_PATH, ROOT_DIR
+#from spg import TIMEOUT, BINARY_PATH, ROOT_DIR
 
 import os, sys, os.path, time
 from subprocess import Popen, PIPE
@@ -243,8 +243,8 @@ class ParameterEnsembleExecutor(ParameterEnsemble):
 
         if os.path.exists("./%s" % self.command):
             self.bin_dir = "."
-        elif os.path.exists("%s%/bin/%s" % (BINARY_PATH, self.command)):
-            self.bin_dir = "%s%/bin" % (BINARY_PATH)
+#        elif os.path.exists("%s%/bin/%s" % (BINARY_PATH, self.command)):
+#            self.bin_dir = "%s%/bin" % (BINARY_PATH)
         else:
             utils.newline_msg("ERR", "Fatal, binary '%s' not found" % self.command)
             sys.exit(1)
@@ -357,8 +357,8 @@ class ParameterEnsembleThreaded(ParameterEnsemble):
 
         if os.path.exists("./%s" % self.command):
             self.bin_dir = "."
-        elif os.path.exists("%s%/bin/%s" % (BINARY_PATH, self.command)):
-            self.bin_dir = "%s%/bin" % (BINARY_PATH)
+#        elif os.path.exists("%s%/bin/%s" % (BINARY_PATH, self.command)):
+#            self.bin_dir = "%s%/bin" % (BINARY_PATH)
         else:
             utils.newline_msg("ERR", "Fatal, binary '%s' not found" % self.command)
             sys.exit(1)

@@ -188,8 +188,13 @@ class IterMutable(Iterator):
         xact=self.xmin
 
         while((self.xmin>self.xmax) ^ (xact <= self.xmax) ): # ^ is xor in python !
-            lsTmp.append(xact)
-            xact=eval("%s%s%s"%(xact,it_type,self.xstep))
+#            print(f"{self.type}({xact})")
+            try:
+                lsTmp.append(eval(f"{self.type}({xact})"))
+            except:
+                lsTmp.append(xact)
+
+            xact=eval(f"{xact}{it_type}{self.xstep}")
        
         return lsTmp
 

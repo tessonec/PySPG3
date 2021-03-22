@@ -1,4 +1,4 @@
-from spg import CONFIG_DIR, TIMEOUT
+#from spg import CONFIG_DIR, TIMEOUT
 
 import sqlite3 as sql
 import spg.utils as utils

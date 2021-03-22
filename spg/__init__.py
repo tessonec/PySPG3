@@ -1,9 +1,11 @@
-version_number   = '4.9.5'
+version_number   = '5.0.0'
 database_version = '2.0'
 release_date = '04 Dec 2020'
 
 from .base.iterator import *
 from .base.parser   import *
+from .simulation.simple import *
+from .runner.single import *
 
 
 import os.path
@@ -11,11 +13,11 @@ import os.path
 #SPG_HOME = os.path.expanduser("~/opt/lib")
 
 
-ROOT_DIR = os.path.expanduser("~/opt")
+#ROOT_DIR = os.path.expanduser("~/opt")
 
 CONFIG_DIR = os.path.expanduser("~/.pyspg")
-VAR_PATH = os.path.abspath(CONFIG_DIR+"/spool")
-BINARY_PATH = os.path.abspath(ROOT_DIR+"/bin")
+#VAR_PATH = os.path.abspath(CONFIG_DIR+"/spool")
+#BINARY_PATH = os.path.abspath(ROOT_DIR+"/bin")
 # RUN_DIR = os.path.expanduser("~/run")
 
 TIMEOUT = 120

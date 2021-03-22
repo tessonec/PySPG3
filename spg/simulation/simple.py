@@ -115,7 +115,10 @@ class MultIteratorList(MultIteratorParser):
 
       assert name in self.input_configuration.keys() , "the requested variable '%s' was not found in the multiterator"%name
       ret = MultIteratorParser.__getitem__(self, name)
+#      print(ret, self.input_configuration[name])
+
       if self.input_configuration[name].var_type != 'str':
+#          print(self.input_configuration[name].var_type)
           ret = eval(f"{self.input_configuration[name].var_type}({ret})")
       return ret
 

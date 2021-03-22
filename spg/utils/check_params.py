@@ -9,7 +9,7 @@ import optparse
 
 from .load_configs import *
 
-from spg import CONFIG_DIR
+#from spg import CONFIG_DIR
 
 from .tools import newline_msg, evaluate_string
 
@@ -36,10 +36,10 @@ def consistency(exec_file, miparser):
 
     exec_file, ext = os.path.splitext(exec_file)
 
-    try:
-        possible_lines = read_input_configuration("%s.input" % (exec_file))
-    except:
-        possible_lines = read_input_configuration("%s/spg-conf/%s.input" % (CONFIG_DIR, exec_file))
+#    try:
+    possible_lines = read_input_configuration("%s.input" % (exec_file))
+    #except:
+    #    possible_lines = read_input_configuration("%s/spg-conf/%s.input" % (CONFIG_DIR, exec_file))
 
     assert len(set(miparser.names ) - set( possible_lines.keys() ) ) == 0 , "not all the variables are recognised: offending vars: %s"%(set( miparser.names ) -set( possible_lines.keys() )  )
   #  print(possible_lines)

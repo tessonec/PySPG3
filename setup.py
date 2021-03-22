@@ -17,7 +17,7 @@ README = open(os.path.join(here, 'README')).read()
 version = open("VERSION").readline().strip()
 
 install_requires = [
-    # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
+    'tqdm', 'pandas>=1.1', 'numpy>=1.10', 'matplotlib'
 ]
 
 
@@ -50,7 +50,7 @@ setup(name='PySPG',
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
-      scripts=['scripts/spg-db.py', 'scripts/spg-plotter.py',
+      scripts=['scripts/spg-db.py','scripts/spg-csv.py', 'scripts/spg-plotter.py',
                'scripts/spg-run-standalone.py','scripts/spg-csv.py',
                'scripts/spg-run-threaded.py', 'scripts/spg-table.py'],
       test_suite='tests')
