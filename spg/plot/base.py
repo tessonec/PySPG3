@@ -48,7 +48,7 @@ class DataFrameIterator:
             yield self.data
 
 
-from spg.plot import DataFrameIterator
+#from spg.plot import DataFrameIterator
 
 class BaseDataLoader:
 

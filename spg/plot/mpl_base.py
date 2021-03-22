@@ -32,7 +32,7 @@ def get_available_fonts(dir_name=None):
     return sorted(set(font_list))
 
 
-def init_mpl(usetex=True, font="CMU Sans Serif"):
+def init_mpl(usetex=False, font="CMU Sans Serif"):
     """
     possible fonts are 'CMU Sans Serif', 'Gill Sans', 'Helvetica Neue', 'Neutraface Text'
     """
