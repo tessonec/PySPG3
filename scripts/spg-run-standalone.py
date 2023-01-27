@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 
-from spg.simulation import *
+import optparse
+import os
+import os.path
+import sys
+
 import spg.utils as utils
-
-import os, os.path, optparse, sys
-
-
+from spg.simulation import *
 
 if __name__ == "__main__":
 

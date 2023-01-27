@@ -1,11 +1,13 @@
 #from spg import CONFIG_DIR, TIMEOUT
 
+import copy
+import os
+import os.path
+import random
 import sqlite3 as sql
-import spg.utils as utils
 
-from spg.simulation import ParameterEnsemble
-import random, copy
-import os, os.path
+from ..simulation import ParameterEnsemble
+
 
 class SPGMasterDB:
     """
@@ -20,7 +22,7 @@ class SPGMasterDB:
         else:
             self.connection = connection
         self.test_run = False
-            
+
         self.EnsembleConstructor = EnsembleConstructor
         self.cursor = self.connection.cursor()
         self.__init_db()
@@ -33,7 +35,7 @@ class SPGMasterDB:
 
     def __init_db(self):
 
-        #:::~ status can be either 
+        #:::~ status can be either
         #:::~    'S': stopped
         #:::~    'R': running
         #:::~    'F': finished
@@ -51,7 +53,7 @@ class SPGMasterDB:
 
         self.cursor.execute("CREATE TABLE IF NOT EXISTS running "
                        "(id INTEGER PRIMARY KEY, job_id CHAR(64), dbs_id INTEGER, params_id INTEGER)")
-    
+
 #        self.cursor.execute("CREATE TABLE IF NOT EXISTS infiles "
 #                          "(id INTEGER PRIMARY KEY, last INTEGER)")
 
@@ -63,18 +65,18 @@ class SPGMasterDB:
         ret = [i for i in self.cursor.execute(query, args)]
         self.connection.commit()
         return ret
-        
+
 
     def query_master_fetchone(self, query, *args):
         ret = self.cursor.execute(query, args).fetchone()
         self.connection.commit()
         return ret
-        
+
     def update_list_ensemble_dbs(self, status = None): # These are the dbs that are registered and running
-        self.result_dbs = {} 
+        self.result_dbs = {}
         if status:
             res = self.cursor.execute("SELECT id, full_name, weight, queue, status FROM dbs  WHERE status = ?",status)
-        else:  
+        else:
             res = self.cursor.execute("SELECT id, full_name, weight, queue, status FROM dbs ")
 
         self.normalising = 0.
@@ -93,7 +95,7 @@ class SPGMasterDB:
 
 
     def write_ensemble_to_master(self, param_db):
-        
+
         db_status = param_db.get_updated_status()
         res = self.cursor.execute("SELECT * FROM dbs WHERE full_name = ?",(param_db.full_name,)).fetchone()
 
@@ -112,7 +114,7 @@ class SPGMasterDB:
 
         if db_status['process_error'] == 1:
             self.cursor.execute("UPDATE dbs SET status = ? WHERE full_name = ? ",('D',param_db.full_name))
-            
+
         self.connection.commit()
 
         return db_status

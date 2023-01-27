@@ -1,23 +1,16 @@
-import pandas as pd
-import pandas.io.parsers as pdp
-
-import numpy as np
-
-import math as m
 import datetime as dt
+import itertools
+import math as m
 
 import matplotlib as mpl
 import matplotlib.backends.backend_pdf as mpl_b_pdf
+import matplotlib.dates as mdates
 import matplotlib.lines as mlines
 import matplotlib.pyplot as plt
-
-
-import matplotlib.dates as mdates
 import matplotlib.ticker as pltt
-
-import itertools
-
-import datetime as dt
+import numpy as np
+import pandas as pd
+import pandas.io.parsers as pdp
 
 
 def get_available_fonts(dir_name=None):

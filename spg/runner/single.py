@@ -1,8 +1,11 @@
-from spg.simulation import MultIteratorList
-import os.path, time
-from tqdm import tqdm
 import concurrent.futures
 import csv
+import os.path
+import time
+
+from tqdm import tqdm
+
+from ..simulation import MultIteratorList
 
 
 class SingleRunner:

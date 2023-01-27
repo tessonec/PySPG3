@@ -1,9 +1,9 @@
-from spg.base import MultIteratorParser
-import spg.utils as utils
+
 import os.path
-
-
 import sys
+
+from .. import utils
+from ..base import MultIteratorParser
 
 
 class MultIteratorList(MultIteratorParser):

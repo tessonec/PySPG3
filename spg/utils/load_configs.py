@@ -4,12 +4,15 @@ Created on Aug 30, 2011
 @author: tessonec
 '''
 
+import os.path
+import sys
+from configparser import ConfigParser
+
 #from spg import CONFIG_DIR
-from .tools import * 
+from .tools import *
+
 #from .check_params import *
 
-from configparser import ConfigParser
-import os.path, sys
 
 
 

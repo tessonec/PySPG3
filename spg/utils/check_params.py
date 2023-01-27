@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
-import os.path
 import copy
 import optparse
-#from math import *
+import os.path
+import sys
 
 from .load_configs import *
+from .tools import evaluate_string, newline_msg
+
+#from math import *
+
 
 #from spg import CONFIG_DIR
 
-from .tools import newline_msg, evaluate_string
 
 
 ############################################################################################################

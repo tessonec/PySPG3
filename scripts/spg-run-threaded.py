@@ -7,9 +7,12 @@ Created on Wed Jun  8 16:20:26 2011
 """
 
 
-from spg.runner import SPGRunningPool
-import spg.utils as utils
+import optparse
+import sys
+import time
 
+import spg.utils as utils
+from spg.runner import SPGRunningPool
 
 # logica del programa
 #   leer la cantidad de procesos a ejecutar de la DB central
@@ -18,8 +21,6 @@ import spg.utils as utils
 #   en este ultimo caso, limpiar la DB central
   #print cmd
   
-import time, sys
-import optparse
 
 
 

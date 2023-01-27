@@ -7,14 +7,11 @@ Created on Sep 21, 2011
 '''
 
 
-import spg.utils
-
 import math as m
 import random as rnd
 import sys
 
-
-
+import spg.utils
 
 
 class ModelRandomWalk:

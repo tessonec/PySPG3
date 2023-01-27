@@ -7,25 +7,26 @@ Created on Mon Jul 11 11:23:41 2011
 Implementation of the paramaters.dat in the form of a database
 """
 
-import spg.utils as utils
-import spg.utils.check_params as check_params
+import csv
+import os.path
+import sqlite3 as sql
+import sys
+from collections import namedtuple
 
-from spg.base import MultIteratorParser, IterConstant
+from .. import database_version, utils
+from ..base import IterConstant, MultIteratorParser
+from ..utils import check_params
+
 #from base.iterator import *
 
-from spg import database_version
 
-import sys, os.path
-import sqlite3 as sql
-import csv
 
-from collections import namedtuple
 
 class SPGConflictingValue(Exception):
     """Raised when the DB has a value different from the one that should be set
 
     Attributes:
-        key      -- 
+        key      --
         previous -- value found in the DB
         current  -- value attempted to be set in the DB
     """
@@ -180,7 +181,7 @@ class MultIteratorDBBuilder(MultIteratorParser):
         for i_repeat in range(repeat):
 
             for i_id in self.possible_varying_ids:
-                #:::~ status can be either 
+                #:::~ status can be either
                 #:::~    'N': not run
                 #:::~    'R': running
                 #:::~    'D': successfully run (done)
@@ -217,8 +218,8 @@ class MultIteratorDBBuilder(MultIteratorParser):
 #                "  affected_bytes_previous INTEGER, affected_bytes_next INTEGER"
 #                "   )"
 #                )
-# 
-# 
+#
+#
 #     cursor.execute("CREATE TABLE IF NOT EXISTS modified_files "
 #                "( id INTEGER PRIMARY KEY, revision INTEGER, file_name CHAR(256))"
 #                )

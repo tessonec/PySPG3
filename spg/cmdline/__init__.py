@@ -1,1 +1,1 @@
-from .base import SPGDBCommandLine, BaseSPGCommandLine
+from .base import BaseSPGCommandLine, SPGDBCommandLine

@@ -1,21 +1,26 @@
-from spg import utils
+
+import csv
+import os
+import os.path
+import signal
+import sqlite3 as sql
+import sys
+import time
+from subprocess import PIPE, Popen
+
+from .. import utils
+
 #from spg import TIMEOUT, BINARY_PATH, ROOT_DIR
 
-import os, sys, os.path, time
-from subprocess import Popen, PIPE
-import sqlite3 as sql
-import spg.utils as utils
-import signal
 # import numpy as n
 
 
 
-import csv 
 
 
 
 class ParameterEnsemble:
-    
+
     def __init__(self, full_name = "", id=-1, weight=1., queue = '*',
                  status = 'R', repeat = 1, init_db = False):
 
@@ -44,7 +49,7 @@ class ParameterEnsemble:
         except:
             utils.newline_msg("ERR", "database '%s' does not exist... exiting"%self.full_name)
         self.cursor = self.connection.cursor()
-         
+
 
 
     def __close_db(self):
@@ -68,14 +73,14 @@ class ParameterEnsemble:
             utils.newline_msg("ERR QUERY", "%s - %s"%(query, args), stream=flog)
             flog.close()
         self.__close_db()
-        return ret 
+        return ret
 
 
     def execute_query_fetchone(self, query, *args):
         self.__connect_db()
         ret = self.cursor.execute(query, args).fetchone()
         self.__close_db()
-        return ret 
+        return ret
 
     def parse_output_line(self,  output_line):
         """ parses a line from output. Returns a tuple containing: table of output, column names of output,  output values to be inserted in table"""
@@ -83,7 +88,7 @@ class ParameterEnsemble:
         table_name = "results"
 
         if output_columns[0][0] == "@":
-            table_name = output_columns[0][1:] 
+            table_name = output_columns[0][1:]
             output_columns.pop(0)
 
         if table_name not in self.table_columns:
@@ -94,7 +99,7 @@ class ParameterEnsemble:
         # except:
         #     utils.newline_msg("ERR", "DB does not contain table named '%s'"%table_name)
         #     sys.exit(1)
-        
+
         return table_name, output_columns
 
     def __getitem__(self, item):
@@ -120,14 +125,14 @@ class ParameterEnsemble:
         sel = self.execute_query("SELECT name FROM entities WHERE varies = 1 ORDER BY id")
         self.variables = [ i[0] for i in sel ]
         #:::~ get the names of the outputs
-        
+
         self.table_columns = {}
-        
+
         table_names = [i[0] for i in self.execute_query("SELECT DISTINCT name from output_tables")]
      ###   print table_names
         for table in table_names:
             fa = self.execute_query("SELECT column FROM output_tables WHERE name = '%s';"%table)
-            
+
             self.table_columns[table] = ["spg_uid", "spg_vsid", "spg_rep"] + [i[0] for i in fa]
 
         # self.directory_vars = self.variables[:-1]
@@ -475,7 +480,7 @@ class ResultsDBQuery(ParameterEnsemble):
             self.vars_in_table = in_table_vars
             self.coalesced_vars = [i for i in self.coalesced_vars if (i not in self.vars_in_table)]
             self.separated_vars = [i for i in self.separated_vars if (i not in self.vars_in_table)]
-            
+
             orphaned = set(self.variables) - set(self.separated_vars) - set(self.vars_in_table) - set(self.coalesced_vars)
             if len(orphaned) > 0:
                 utils.newline_msg("VAR", "orphaned variables '%s' added to separated variables"%orphaned, indent=4)
@@ -484,8 +489,8 @@ class ResultsDBQuery(ParameterEnsemble):
         else:
         #    print in_table_vars, conf
             utils.newline_msg("VAR", "the variables '%s' are not recognised"%set(in_table_vars)-set(self.variables) )
-        
-                
+
+
     def setup_vars_separated(self, conf):
         """Which variables are separated in different directories, orphaned variables are sent into the coalesced ones"""
         if conf.strip() != "" :
@@ -526,9 +531,9 @@ class ResultsDBQuery(ParameterEnsemble):
 
     def clean_dict(self,dict_to_clean):
         """ adds quotes to strings """
-        for i in dict_to_clean:  
+        for i in dict_to_clean:
             try:
-                float( dict_to_clean[i] ) 
+                float( dict_to_clean[i] )
             except:
                 dict_to_clean[ i ] = "'%s'"%( dict_to_clean[i ].replace("'","").replace('"',"") )
 

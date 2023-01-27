@@ -1,12 +1,16 @@
+import os.path
+import pickle
+import sqlite3 as sql
+import sys
+import time
+from subprocess import PIPE, Popen
+
 from spg import utils
+
 #from spg import ROOT_DIR
 
 
 
-import os.path, sys, time
-import pickle 
-from subprocess import Popen, PIPE
-import sqlite3 as sql
 
 
 

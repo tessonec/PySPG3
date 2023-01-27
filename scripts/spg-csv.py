@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
-import os, sys
-import time
+import csv
 import logging
+import optparse
+import os
+import sys
+import time
 
+import spg
 from spg.simulation import MultIteratorList
 from spg.utils import SPGSettings
-import spg
-import optparse
-
-import csv
-import optparse
 
 
 def parse_command_line():
