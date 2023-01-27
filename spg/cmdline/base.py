@@ -5,14 +5,14 @@
 
 # from spg import RUN_DIR
 
-import sys, os.path
 import cmd
-
-import re, fnmatch
-from setuptools.command.saveopts import saveopts
+import fnmatch
+import os.path
+import re
+import sys
 
 import spg.utils as utils
-from spg.simulation import ParameterEnsemble
+from setuptools.command.saveopts import saveopts
 from spg.master import SPGMasterDB
 from spg.simulation import MultIteratorDBBuilder, ParameterEnsemble
 

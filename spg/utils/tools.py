@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys, re, os.path
+import os.path
+import re
+import sys
 from math import *
 
 

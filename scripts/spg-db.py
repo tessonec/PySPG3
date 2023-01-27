@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 
 
-import spg.utils as utils
-from spg.simulation import MultIteratorDBBuilder, ParameterEnsemble
-# from spg.master import SPGMasterDB
-from spg.cmdline import SPGDBCommandLine
+import fnmatch
+import optparse
+import os
+import os.path
+
+#import sqlite3 as sql
+import sys
+
 # from spg import VAR_PATH, RUN_DIR
 import spg.utils as utils
 
-#import sqlite3 as sql
-import sys, optparse
-import os, os.path
+# from spg.master import SPGMasterDB
+from spg.cmdline import SPGDBCommandLine
+from spg.simulation import MultIteratorDBBuilder, ParameterEnsemble
 
-
-import fnmatch
 #
 #
 # class SPGDBCommandLine(DBCommandLine):

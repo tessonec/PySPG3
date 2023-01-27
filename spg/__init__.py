@@ -2,13 +2,12 @@ version_number   = '5.0.0'
 database_version = '2.0'
 release_date = '04 Dec 2020'
 
-from .base.iterator import *
-from .base.parser   import *
-from .simulation.simple import *
-from .runner.single import *
-
-
 import os.path
+
+from .base.iterator import *
+from .base.parser import *
+from .runner.single import *
+from .simulation.simple import *
 
 #SPG_HOME = os.path.expanduser("~/opt/lib")
 

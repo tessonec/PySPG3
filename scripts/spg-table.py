@@ -6,21 +6,26 @@ Created on Mon Jul 11 11:37:27 2011
 @author: Claudio Tessone - <claudio.tessone@uzh.ch>
 """
 
-#from spg import  CONFIG_DIR
-import spg.utils as utils
-from spg.cmdline import BaseSPGCommandLine
-from spg.simulation import ResultsDBQuery
-import spg.utils as utils
-
-import numpy as np
+import csv
+import fnmatch
 import math as m
+import optparse
+import os
+import os.path
+
 #from matplotlib import rc
 #import matplotlib.pyplot as plt
 #import matplotlib.pylab as plb
 import sqlite3 as sql
-import sys, optparse
-import os, os.path
-import fnmatch, csv
+import sys
+
+import numpy as np
+
+#from spg import  CONFIG_DIR
+import spg.utils as utils
+from spg.cmdline import BaseSPGCommandLine
+from spg.simulation import ResultsDBQuery
+
 
 class SPGResultsCommandLine(BaseSPGCommandLine):
     """Results command handler"""

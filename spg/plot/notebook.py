@@ -6,36 +6,26 @@ Created on 12 Apr 2014
 @author: tessonec
 '''
 
-import spg.plot as spgp
-import spg.base as spgb 
-import spg.utils as spgu
-
-
-import pandas as pd
-import numpy as np
+import itertools
 import math as m
-
-
-
 import os.path
 import re
 
 import ipywidgets as ipyw
-import itertools
-
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 import matplotlib.lines as mpll
-
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import spg.base as spgb
+import spg.plot as spgp
+import spg.utils as spgu
 from IPython.display import display
-
-
-
 from spg import CONFIG_DIR
+from spg.plot import DataFrameIterator
 
 # from spg.utils import newline_msg, evaluate_string, load_configuration
 
-from spg.plot import DataFrameIterator
 
 class BaseDataLoader:
 

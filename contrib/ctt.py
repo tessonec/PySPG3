@@ -41,6 +41,8 @@ safeOperation = False
 
 included_files=[]
 import os.path
+
+
 def search_for_includes(com):
   for l in com:
     if l[0]=="include":
@@ -186,9 +188,9 @@ def backendize(infile):
 
 if __name__=="__main__":
 
-   import getopt, sys
-
+   import getopt
    import os.path
+   import sys
 
    useNamespaces=False
    createInit=False

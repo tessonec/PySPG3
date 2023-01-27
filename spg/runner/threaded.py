@@ -2,17 +2,16 @@
 
 
 
-import random as rnd
-import threading, time
-import spg.utils as utils
-
-
-from spg.master import SPGMasterDB
-from spg.simulation import ParameterEnsembleExecutor, ParameterEnsembleThreaded
-
-
-from collections import defaultdict
 import math as m
+import random as rnd
+import threading
+import time
+from collections import defaultdict
+
+from .. import utils
+from ..master import SPGMasterDB
+from ..simulation import ParameterEnsembleThreaded
+
 
 class SPGRunningAtom(threading.Thread):
     n_threads = 0

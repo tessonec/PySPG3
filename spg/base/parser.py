@@ -19,13 +19,13 @@
 
 
 
-from . import iterator 
-
-from math import * 
-
+import fnmatch
+import os
+import os.path
 import re
-import fnmatch, os, os.path
+from math import *
 
+from . import iterator
 
 
 class Execute(iterator.IterConstant):

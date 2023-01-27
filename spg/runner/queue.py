@@ -1,6 +1,7 @@
 
-from subprocess import Popen, PIPE
 import sqlite3 as sql
+from subprocess import PIPE, Popen
+
 from spg import BINARY_PATH
 
 

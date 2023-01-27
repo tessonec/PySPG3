@@ -8,17 +8,13 @@ Created on Tue Jun 28 08:10:30 2011
 ###################################################################################################
 
 
-from spg import utils
-from spg import ROOT_DIR
-from spg.simulation import ParameterAtom, ParameterEnsemble
-
-from spg.master import SPGMasterDB #, PickledMaster
-
-
+import fnmatch
 import os
 import random
 
-import fnmatch
+from spg import ROOT_DIR, utils
+from spg.master import SPGMasterDB  # , PickledMaster
+from spg.simulation import ParameterAtom, ParameterEnsemble
 
 #
 # class MasterDBThreadedExchanger(SPGMasterDB):
