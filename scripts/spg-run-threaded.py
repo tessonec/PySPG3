@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Wed Jun  8 16:20:26 2011
 
@@ -19,30 +18,36 @@ from spg.runner import SPGRunningPool
 #   si este numero es menor (para alguna cola) que el que esta corriendo. lanzar los que faltan
 #   si este numero es mayor (para alguna cola) que el que esta corriendo. matar los que sobran
 #   en este ultimo caso, limpiar la DB central
-  #print cmd
-  
-
+# print cmd
 
 
 if __name__ == "__main__":
-    parser = optparse.OptionParser(usage = "usage: %prog [options] project_id1 ")
-    parser.add_option("--sleep", type="int", action='store', dest="sleep",
-                            default = 1 , help = "waiting time before refresh" )
+    parser = optparse.OptionParser(usage="usage: %prog [options] project_id1 ")
+    parser.add_option(
+        "--sleep",
+        type="int",
+        action="store",
+        dest="sleep",
+        default=1,
+        help="waiting time before refresh",
+    )
 
-    parser.add_option("--test-run", action='store_true', dest="test_run",
-                      help="runs once and preserves the temporary files")
+    parser.add_option(
+        "--test-run",
+        action="store_true",
+        dest="test_run",
+        help="runs once and preserves the temporary files",
+    )
 
     options, args = parser.parse_args()
 
-    
-    run_pool = SPGRunningPool( test_run = options.test_run )
+    run_pool = SPGRunningPool(test_run=options.test_run)
 
-#    print options.test_run
-
+    #    print options.test_run
 
     while True:
         try:
-            run_pool.launch_workers(  )
+            run_pool.launch_workers()
             time.sleep(options.sleep)
         except (KeyboardInterrupt,):
             print()

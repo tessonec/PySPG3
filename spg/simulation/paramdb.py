@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Mon Jul 11 11:23:41 2011
 
@@ -7,19 +6,14 @@ Created on Mon Jul 11 11:23:41 2011
 Implementation of the paramaters.dat in the form of a database
 """
 
-import csv
-import os.path
 import sqlite3 as sql
 import sys
-from collections import namedtuple
 
 from .. import database_version, utils
 from ..base import IterConstant, MultIteratorParser
 from ..utils import check_params
 
-#from base.iterator import *
-
-
+# from base.iterator import *
 
 
 class SPGConflictingValue(Exception):
@@ -36,7 +30,10 @@ class SPGConflictingValue(Exception):
         self.previous = previous
         self.value = value
 
-        utils.newline_msg("ERR","conflict in %s name (in db '%s', in param '%s')"%(key, previous, value ))
+        utils.newline_msg(
+            "ERR",
+            f"conflict in {key} name (in db '{previous}', in param '{value}')",
+        )
 
 
 class MultIteratorDBBuilder(MultIteratorParser):
@@ -45,8 +42,8 @@ class MultIteratorDBBuilder(MultIteratorParser):
     def __init__(self, db_name, timeout=5):
         full_name, self.path, self.base_name, extension = utils.translate_name(db_name)
 
-        self.db_name = "%s/%s.spgql" % (self.path, self.base_name)
-        sim_name = "%s/%s.spg" % (self.path, self.base_name)
+        self.db_name = f"{self.path}/{self.base_name}.spgql"
+        sim_name = f"{self.path}/{self.base_name}.spg"
 
         MultIteratorParser.__init__(self, open(sim_name))
         #   print self.data
@@ -61,92 +58,115 @@ class MultIteratorDBBuilder(MultIteratorParser):
 
         self.stdout_contents = dict()
         for k in all_outputs:
-            table=k.output_table
+            table = k.output_table
             if table not in self.stdout_contents.leys():
-                self.stdout_contents[ table ] = k
+                self.stdout_contents[table] = k
 
-
-
-
-
-
-        self.connection = sql.connect(self.db_name, timeout=timeout, check_same_thread=False)
+        self.connection = sql.connect(
+            self.db_name, timeout=timeout, check_same_thread=False
+        )
         self.cursor = self.connection.cursor()
 
-    def check_and_insert_information(self, key, expected_value=None, do_not_compare=False):
+    def check_and_insert_information(
+        self, key, expected_value=None, do_not_compare=False
+    ):
         # :::~ Check whether the data found in the database and expected, coincides
         # :::~ if expected_value is None,
 
         self.cursor.execute("SELECT value FROM information WHERE key = ?", (key,))
         prev_val = self.cursor.fetchone()
         if prev_val is not None:
-            prev_val, = prev_val
+            (prev_val,) = prev_val
 
         if prev_val and expected_value is not None:
             if str(prev_val) != str(expected_value):
                 raise SPGConflictingValue(key, prev_val, expected_value)
         else:
-            self.cursor.execute("INSERT INTO information (key,value) VALUES (?,?)", (key, expected_value))
+            self.cursor.execute(
+                "INSERT INTO information (key,value) VALUES (?,?)",
+                (key, expected_value),
+            )
         self.connection.commit()
 
     def init_db(self):
         #:::~ Table with the information related to the database
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS information "
-                            "(id INTEGER PRIMARY KEY, key CHAR(64), value CHAR(128))"
-                            )
+        self.cursor.execute(
+            "CREATE TABLE IF NOT EXISTS information "
+            "(id INTEGER PRIMARY KEY, key CHAR(64), value CHAR(128))"
+        )
 
-        self.check_and_insert_information('version', database_version)
-        self.check_and_insert_information('command', self.command)
-        self.check_and_insert_information('path', self.path)
-        self.check_and_insert_information('base_name', self.base_name)
+        self.check_and_insert_information("version", database_version)
+        self.check_and_insert_information("command", self.command)
+        self.check_and_insert_information("path", self.path)
+        self.check_and_insert_information("base_name", self.base_name)
 
         #:::~ Table with the defined entities
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS entities "
-                            "(id INTEGER PRIMARY KEY, name CHAR(64), varies INTEGER)"
-                            )
+        self.cursor.execute(
+            "CREATE TABLE IF NOT EXISTS entities "
+            "(id INTEGER PRIMARY KEY, name CHAR(64), varies INTEGER)"
+        )
 
         self.cursor.execute("SELECT COUNT(*) FROM entities ")
         n_items = self.cursor.fetchone()
         if n_items[0] == 0:  # table has not been filled
             for i in self.data:
                 varies = 1 if (i.__class__ != IterConstant) else 0
-                self.cursor.execute("INSERT INTO entities (name, varies) VALUES (?,?)", (i.name, varies))
+                self.cursor.execute(
+                    "INSERT INTO entities (name, varies) VALUES (?,?)", (i.name, varies)
+                )
         else:
             self.cursor.execute("SELECT name FROM entities ")
-            entities = set([i[0] for i in self.cursor])
+            entities = {i[0] for i in self.cursor}
             s_names = set(self.names)
 
             if entities != set(self.names):
-                utils.newline_msg("ERR", "parameter (was %s, is %s)" % (entities, s_names))
+                utils.newline_msg("ERR", f"parameter (was {entities}, is {s_names})")
                 sys.exit(1)
 
         self.connection.commit()
 
-        elements = "CREATE TABLE IF NOT EXISTS values_set (id INTEGER PRIMARY KEY,  %s )" % (
-            ", ".join(["%s CHAR(64) " % i for i in self.names]))
+        elements = (
+            "CREATE TABLE IF NOT EXISTS values_set (id INTEGER PRIMARY KEY,  %s )"
+            % (", ".join(["%s CHAR(64) " % i for i in self.names]))
+        )
         # print elements
         self.cursor.execute(elements)
 
-        elements = "INSERT INTO values_set ( %s ) VALUES (%s)" % (
-        ", ".join(["%s " % i for i in self.names]), ", ".join("?" for i in self.names))
+        elements = "INSERT INTO values_set ( {} ) VALUES ({})".format(
+            ", ".join(["%s " % i for i in self.names]),
+            ", ".join("?" for i in self.names),
+        )
 
         # :::~ (CT) Index creation code
         for i in self.data:
 
-            if i.__class__ == IterConstant: continue
+            if i.__class__ == IterConstant:
+                continue
 
-            self.cursor.execute("CREATE INDEX IF NOT EXISTS idxvs_%s_id ON values_set (%s) " % (i.name, i.name))
+            self.cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idxvs_%s_id ON values_set (%s) "
+                % (i.name, i.name)
+            )
 
         self.possible_varying_ids = []
         for i in self:
-            self.cursor.execute(elements, [
-                utils.replace_values(self[j], self, vars_to_skip=set(['spg_uid', 'spg_vsid', 'spg_rep'])) for j in
-                self.names])
+            self.cursor.execute(
+                elements,
+                [
+                    utils.replace_values(
+                        self[j],
+                        self,
+                        vars_to_skip={"spg_uid", "spg_vsid", "spg_rep"},
+                    )
+                    for j in self.names
+                ],
+            )
             self.possible_varying_ids.append(self.cursor.lastrowid)
         self.connection.commit()
 
         self.cursor.execute(
-            "CREATE TABLE IF NOT EXISTS output_tables (id INTEGER PRIMARY KEY, name CHAR(128) , column CHAR(128) )")
+            "CREATE TABLE IF NOT EXISTS output_tables (id INTEGER PRIMARY KEY, name CHAR(128) , column CHAR(128) )"
+        )
 
         for results_table in list(self.stdout_contents.keys()):
             table_contents = self.stdout_contents[results_table]
@@ -157,8 +177,18 @@ class MultIteratorDBBuilder(MultIteratorParser):
             #     if iv["type"] == "xydy":
             #         self.number_of_columns += 2
 
-            results = "CREATE TABLE IF NOT EXISTS %s (id INTEGER PRIMARY KEY, spg_uid INTEGER, spg_vsid INTEGER, spg_rep INTEGER, %s, FOREIGN KEY(spg_uid) REFERENCES run_status(id), FOREIGN KEY(spg_vsid) REFERENCES values_set(id))" % (
-            results_table, ", ".join(["%s %s" % (ic, iv["datatype"]) for ic, iv in table_contents]))
+            results = (
+                "CREATE TABLE IF NOT EXISTS %s (id INTEGER PRIMARY KEY, spg_uid INTEGER, spg_vsid INTEGER, spg_rep INTEGER, %s, FOREIGN KEY(spg_uid) REFERENCES run_status(id), FOREIGN KEY(spg_vsid) REFERENCES values_set(id))"
+                % (
+                    results_table,
+                    ", ".join(
+                        [
+                            "{} {}".format(ic, iv["datatype"])
+                            for ic, iv in table_contents
+                        ]
+                    ),
+                )
+            )
             self.cursor.execute(results)
         self.connection.commit()
 
@@ -166,18 +196,22 @@ class MultIteratorDBBuilder(MultIteratorParser):
             #           self.cursor.execute("INSERT INTO output_tables ( name, column ) VALUES (?, ?)",( results_table, 'spg_runid' ) )
             table_contents = self.stdout_contents[results_table]
             for ic, iv in table_contents:
-                self.cursor.execute("INSERT INTO output_tables ( name, column ) VALUES (?, ?)", (results_table, ic))
+                self.cursor.execute(
+                    "INSERT INTO output_tables ( name, column ) VALUES (?, ?)",
+                    (results_table, ic),
+                )
 
         self.connection.commit()
 
         self.cursor.execute(
             "CREATE TABLE IF NOT EXISTS run_status (id INTEGER PRIMARY KEY, spg_vsid INTEGER, spg_rep INTEGER, status CHAR(1), run_time FLOAT, "
-            "FOREIGN KEY (spg_vsid) REFERENCES values_set(id) )")
+            "FOREIGN KEY (spg_vsid) REFERENCES values_set(id) )"
+        )
         self.connection.commit()
 
     def fill_status(self, repeat=1):
 
-        self.check_and_insert_information('repeat', repeat)
+        self.check_and_insert_information("repeat", repeat)
         for i_repeat in range(repeat):
 
             for i_id in self.possible_varying_ids:
@@ -186,16 +220,12 @@ class MultIteratorDBBuilder(MultIteratorParser):
                 #:::~    'R': running
                 #:::~    'D': successfully run (done)
                 #:::~    'E': run but with non-zero error code
-                self.cursor.execute("INSERT INTO run_status ( spg_vsid, spg_rep, status ) VALUES (?,?,?)",
-                                    (i_id, i_repeat, 'N'))
+                self.cursor.execute(
+                    "INSERT INTO run_status ( spg_vsid, spg_rep, status ) VALUES (?,?,?)",
+                    (i_id, i_repeat, "N"),
+                )
 
         self.connection.commit()
-
-
-
-
-
-
 
 
 #    def clean_status(self):
@@ -209,7 +239,7 @@ class MultIteratorDBBuilder(MultIteratorParser):
 #        self.connection.commit()
 
 
-#===============================================================================
+# ===============================================================================
 #     cursor.execute("CREATE TABLE IF NOT EXISTS revision_history "
 #                "( id INTEGER PRIMARY KEY, revision INTEGER, author CHAR(64), date CHAR(64), "
 #                "  size INTEGER, number_of_files INTEGER, modified_files INTEGER, "

@@ -1,22 +1,16 @@
-'''
+"""
 Created on Aug 30, 2011
 
 @author: tessonec
-'''
+"""
 
 import os.path
 import sys
-from configparser import ConfigParser
 
-#from spg import CONFIG_DIR
+# from spg import CONFIG_DIR
 from .tools import *
 
-#from .check_params import *
-
-
-
-
-
+# from .check_params import *
 
 
 class SPGSettings(dict):
@@ -29,8 +23,10 @@ class SPGSettings(dict):
     def __str__(self):
         ret = ":\n"
         for k in self.keys():
-            ret += "%s = %s\n" % (k, self[k])
+            ret += f"{k} = {self[k]}\n"
         return ret
+
+
 #
 # def load_configuration(config_filename, filter_keys = None):
 #     """
@@ -78,111 +74,124 @@ class SPGSettings(dict):
 #
 
 
-
 def read_input_configuration(exec_file):
-    """ Imports the backends used in a base.ct file """
+    """Imports the backends used in a base.ct file"""
 
     exec_file, ext = os.path.splitext(exec_file)
-#    try:
+    #    try:
     cfgFile = f"{exec_file}.input"
-#    except:
-#        cfgFile = f"{CONFIG_DIR}/spg-conf/{exec_file}.input"
+    #    except:
+    #        cfgFile = f"{CONFIG_DIR}/spg-conf/{exec_file}.input"
 
-
-
-    possible_keys = set(["type", "label", "help", 'categories', 'default'])
+    {"type", "label", "help", "categories", "default"}
     ret = SPGSettings()
 
     for l in open(cfgFile):
 
         l = l.strip()
-        if len(l) == 0: continue
-        if l[0] == "#": continue  # comment line
+        if len(l) == 0:
+            continue
+        if l[0] == "#":
+            continue  # comment line
 
         l = l.split(":")
 
         var_name = l.pop(0).strip()
-      #  print(l)
+        #  print(l)
 
         try:
-            d = {k.strip(): v.strip() for k, v in [_.split("=") for _ in l if len(_) > 0]}
+            d = {
+                k.strip(): v.strip() for k, v in [_.split("=") for _ in l if len(_) > 0]
+            }
         except:
-            newline_msg("ERR", f"while parsing variable '{var_name}' information: >{l}<")
+            newline_msg(
+                "ERR", f"while parsing variable '{var_name}' information: >{l}<"
+            )
             sys.exit(1)
 
         _ = SPGSettings()
 
-        _.var_type = d['type']
+        _.var_type = d["type"]
 
         if "categories" in d.keys():
             _.family = "choice"
             _.categories = eval(d["categories"])
-            if 'default' not in d:
+            if "default" not in d:
                 _.default = _.categories[0]
         else:
-            _.family = 'val'
+            _.family = "val"
 
         if "default" in d.keys():
             _.default = eval(d["default"])
 
         if "label" in d.keys():
-            _.label = d['label']
+            _.label = d["label"]
         if "help" in d.keys():
-            _.label = d['help']
+            _.label = d["help"]
 
         ret[var_name] = _
-  #  print("----",ret)
+    #  print("----",ret)
     return ret
 
 
 def read_output_configuration(exec_file):
     """
-     keysColumns = ["type","label","help","scale","repeat", "lim"]
-     the structure of the columns in the files are as follows:
-     name of the variable, and a colon separated list of -optional- options
-     type:  of the plot if xy, one column is used, xydy two columns are used
-     label: to be used in the plotting script
-     scale: comma separated list of minimum and maximum values
-     repeat: how many columns are to be taken by the parser
-     help: a string containing an explanation of the variable"""
+    keysColumns = ["type","label","help","scale","repeat", "lim"]
+    the structure of the columns in the files are as follows:
+    name of the variable, and a colon separated list of -optional- options
+    type:  of the plot if xy, one column is used, xydy two columns are used
+    label: to be used in the plotting script
+    scale: comma separated list of minimum and maximum values
+    repeat: how many columns are to be taken by the parser
+    help: a string containing an explanation of the variable"""
 
-    possible_keys = set(["type", "label", "help", "scale", "repeat", "datatype", "lim", "output_table"])
+    possible_keys = {
+        "type",
+        "label",
+        "help",
+        "scale",
+        "repeat",
+        "datatype",
+        "lim",
+        "output_table",
+    }
     #    if exec_file[:2] == "ct" and exec_file[3] == "-" :  exec_file = exec_file[4:]
     ret = {}
     exec_file, ext = os.path.splitext(exec_file)
-    #try:
+    # try:
     cfgFile = f"{exec_file}.stdout"
-    #except:
+    # except:
     #    cfgFile = f"{CONFIG_DIR}/spg-conf/{exec_file}.stdout"
-
-
 
     ret = SPGSettings()  # :::~ by default, results table is always created
 
-
     for l in open(cfgFile):
         l = l.strip()
-        if len(l) == 0: continue
-        if l[0] == "#": continue  # comment line
+        if len(l) == 0:
+            continue
+        if l[0] == "#":
+            continue  # comment line
 
         l = l.split(":")
 
         name = l.pop(0).strip()
 
-
-
-        values = SPGSettings({"type": "xy", "datatype": "float", "output_table":'results'})
+        values = SPGSettings(
+            {"type": "xy", "datatype": "float", "output_table": "results"}
+        )
         for o in l:
             try:
                 k, v = o.split("=")
             except:
-                newline_msg("FATAL", "processing '%s', line: '%s', field: '%s'" % (cfgFile, l, o))
+                newline_msg(
+                    "FATAL", f"processing '{cfgFile}', line: '{l}', field: '{o}'"
+                )
                 sys.exit(1)
             k = k.strip()
             v = v.strip()
 
             if k not in possible_keys:
-                newline_msg("SYN", "in column '%s', unrecognised key '%s'" % (name, k))
+                newline_msg("SYN", f"in column '{name}', unrecognised key '{k}'")
                 sys.exit(1)
             if k == "lim":
                 values[k] = eval(v)
@@ -194,9 +203,8 @@ def read_output_configuration(exec_file):
     return ret
 
 
-
 def read_parameter_atom(argv):
-    """ Loads a parameter atom, compares it with the list of possible keys and returns the actual values"""
+    """Loads a parameter atom, compares it with the list of possible keys and returns the actual values"""
 
     prog_name = os.path.split(argv[0])[-1]
     # if prog_name[:2] == "ct" and prog_name[3] == "-" :  prog_name = prog_name[4:]
@@ -219,17 +227,19 @@ def read_parameter_atom(argv):
             if var_type == "str":
                 ret[k] = default
             else:
-                ret[k] = eval("%s(%s)" % (var_type, default))
+                ret[k] = eval(f"{var_type}({default})")
         elif family == "choice":
             if var_type == "str":
                 ret[k] = default[0]
             else:
-                ret[k] = eval("%s(%s)" % (var_type, default[0]))
+                ret[k] = eval(f"{var_type}({default[0]})")
 
     for line in open(input_filename):
         line = line.strip()
-        if not line: continue
-        if line[0] == "#": continue
+        if not line:
+            continue
+        if line[0] == "#":
+            continue
         vec = line.split()
         key = vec[0]
         if key not in possible_lines:
@@ -243,46 +253,19 @@ def read_parameter_atom(argv):
             if var_type == "str":
                 ret[key] = vec[1]
             else:
-                ret[key] = eval("%s('%s')" % (var_type, vec[1]))
+                ret[key] = eval(f"{var_type}('{vec[1]}')")
         #            print ret[k]
         elif family == "choice":
             if vec[1] in default:
-                ret[key] = eval("%s('%s')" % (var_type, vec[1]))
+                ret[key] = eval(f"{var_type}('{vec[1]}')")
             else:
-                newline_msg("ERR", "value '%s' not among possible values for '': %s" % (vec[1], key, default))
+                newline_msg(
+                    "ERR", f"value '{vec[1]}' not among possible values for '': {key}"
+                )
                 sys.exit(2)
         # print ret
 
     return ret
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #
@@ -359,8 +342,6 @@ def read_parameter_atom(argv):
 #         ret[table].append((name, values))
 #
 #     return ret
-
-
 
 
 #

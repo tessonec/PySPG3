@@ -1,20 +1,14 @@
 #!/usr/bin/env python3
 
 
-import fnmatch
-import optparse
-import os
-import os.path
-
-#import sqlite3 as sql
+# import sqlite3 as sql
 import sys
-
-# from spg import VAR_PATH, RUN_DIR
-import spg.utils as utils
 
 # from spg.master import SPGMasterDB
 from spg.cmdline import SPGDBCommandLine
-from spg.simulation import MultIteratorDBBuilder, ParameterEnsemble
+
+# from spg import VAR_PATH, RUN_DIR
+
 
 #
 #
@@ -310,13 +304,10 @@ from spg.simulation import MultIteratorDBBuilder, ParameterEnsemble
 #         except:
 # 	    pass
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cmd_line = SPGDBCommandLine()
 
     if len(sys.argv) == 1:
         cmd_line.cmdloop()
     else:
         cmd_line.onecmd(" ".join(sys.argv[1:]))
-        
-
-

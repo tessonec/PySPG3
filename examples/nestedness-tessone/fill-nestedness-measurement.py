@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Created on Sep 21, 2011
 
 @author: tessonec
-'''
+"""
 
 
-import math as m
 import random as rnd
 import sys
 
@@ -15,41 +14,35 @@ import spg.utils as utils
 
 
 class ModelRandomWalk:
-    
     def __init__(self):
         self.X = 0
         self.S = 0
         self.D = 1
         self.Q = 0
         self.drift = 1
-        
 
     def iterate(self):
-        pos_change = rnd.normalvariate(0, self.D) +  self.drift + self.X * self.Q * rnd.normalvariate(0, self.Q) ; 
-        self.X +=pos_change
-        self.S += pos_change*pos_change 
-
-
-
-
+        pos_change = (
+            rnd.normalvariate(0, self.D)
+            + self.drift
+            + self.X * self.Q * rnd.normalvariate(0, self.Q)
+        )
+        self.X += pos_change
+        self.S += pos_change * pos_change
 
 
 if __name__ == "__main__":
-    
 
-    
     parameters = utils.read_parameter_atom(sys.argv)
-    utils.newline_msg("INF", "parameters: \n %s" % parameters )
+    utils.newline_msg("INF", "parameters: \n %s" % parameters)
 
-    
-    
-    system = ModelRandomWalk(  )
+    system = ModelRandomWalk()
     system.D = parameters.D
     system.Q = parameters.Q
     system.drift = parameters.drift
-    
+
     for i_iter in range(parameters.simulation_timesteps):
-      system.iterate()
+        system.iterate()
     print(system.X, system.S)
 #    for i_iter in range(parameters.simulation_timesteps):
 #      system.iterate()

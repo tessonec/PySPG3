@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Created on 12 Apr 2014
 
 @author: tessonec
-'''
+"""
 
 import itertools
-import math as m
 import os.path
 import re
 
@@ -21,29 +20,26 @@ import spg.base as spgb
 import spg.plot as spgp
 import spg.utils as spgu
 from IPython.display import display
-from spg import CONFIG_DIR
 from spg.plot import DataFrameIterator
 
 # from spg.utils import newline_msg, evaluate_string, load_configuration
 
 
 class BaseDataLoader:
-
     def describe_variables(self):
         for v in self.variables:
-            red_d = self.data[ v ].unique()
-            print("%-16s: %4s values || %s -- %s"%(v, len(red_d), min(red_d), max(red_d) ))
-
+            red_d = self.data[v].unique()
+            print(
+                "%-16s: %4s values || %s -- %s"
+                % (v, len(red_d), min(red_d), max(red_d))
+            )
 
     def describe_configuration(self):
-        print("variables      : %s"%( ", ".join(self.variables ) ))
-        print("  + separated  : %s"%(self.separated_vars))
-        print("  + coalesced  : %s"%(self.coalesced_vars))
-        print("  + independent: %s"%(self.independent_var))
-        print("output columns : %s "%( ", ".join(self.output_columns) ))
-
-
-
+        print("variables      : %s" % (", ".join(self.variables)))
+        print("  + separated  : %s" % (self.separated_vars))
+        print("  + coalesced  : %s" % (self.coalesced_vars))
+        print("  + independent: %s" % (self.independent_var))
+        print("output columns : %s " % (", ".join(self.output_columns)))
 
     def setup_output_columns(self, oc):
         self.output_columns = oc
@@ -75,7 +71,6 @@ class BaseDataLoader:
     #         self.separated_vars.remove(v)
     #         self.independent_var = v
 
-
     # def cycle_all(self, f_local):
     #
     #     ret = []
@@ -90,17 +85,16 @@ class BaseDataLoader:
 
         ret = []
         for outer_df in DataFrameIterator(self.data, self.separated_vars):
-            ret.append( [ outer_df[v].unique()[0] for v in self.separated_vars ] )
+            ret.append([outer_df[v].unique()[0] for v in self.separated_vars])
         return ret
 
     def get_coalesced_values(self):
 
         ret = []
         for inner_df in DataFrameIterator(self.data, self.coalesced_vars):
-            ret.append( [ inner_df[v].unique()[0] for v in self.coalesced_vars ] )
+            ret.append([inner_df[v].unique()[0] for v in self.coalesced_vars])
 
         return ret
-
 
     #
     # def outer_inner(self, outer_df, inner_df):
@@ -142,13 +136,17 @@ class CSVDataLoader(BaseDataLoader):
 
         self.settings = settings
 
+        print("[__init__] constants: %s" % list(self.constants.keys()))
+        print("[__init__] independent variables: %s" % self.variables)
+        print("[__init__] output columns: %s" % self.output_columns)
 
-        print("[__init__] constants: %s"% list(self.constants.keys()))
-        print("[__init__] independent variables: %s"% self.variables)
-        print("[__init__] output columns: %s"% self.output_columns)
-
-
-    def configure_vars(self, separated_vars, coalesced_vars, independent_var=None, recalculate_output_columns=True):
+    def configure_vars(
+        self,
+        separated_vars,
+        coalesced_vars,
+        independent_var=None,
+        recalculate_output_columns=True,
+    ):
         all_vars = separated_vars + coalesced_vars
         if independent_var is not None:
             all_vars.append(independent_var)
@@ -166,25 +164,26 @@ class CSVDataLoader(BaseDataLoader):
 
         self.variables = all_vars
 
-#        print self.variables
+        #        print self.variables
         if recalculate_output_columns:
-            self.output_columns = [kn for kn in list(self.data.keys()) if kn not in self.variables]
-
+            self.output_columns = [
+                kn for kn in list(self.data.keys()) if kn not in self.variables
+            ]
 
 
 class SPGDataLoader(BaseDataLoader):
     """
-     A class that constructs the plots.
-     It exposes
-     self.parameter_file: spg file name
-     self.base_name:
-     self.datafile_name:
+    A class that constructs the plots.
+    It exposes
+    self.parameter_file: spg file name
+    self.base_name:
+    self.datafile_name:
 
-     self.simulation: the MultIterator that describes the simulation
+    self.simulation: the MultIterator that describes the simulation
 
-     self.full_dataframe : ALl the data in the table
-     self.variables
-     self.constants
+    self.full_dataframe : ALl the data in the table
+    self.variables
+    self.constants
     """
 
     def __init__(self, exec_name, simulation_filename):
@@ -195,12 +194,12 @@ class SPGDataLoader(BaseDataLoader):
         self.simulation_filename = simulation_filename
 
         self.base_name, foo = os.path.splitext(self.simulation_filename)
-#        self.datafile_name = "%s_%s.csv"%(self.base_name, table_name)
-        self.datafile_name = "%s.csv"%(self.base_name)
+        #        self.datafile_name = "%s_%s.csv"%(self.base_name, table_name)
+        self.datafile_name = "%s.csv" % (self.base_name)
 
         self.full_dataframe = pd.read_csv(self.datafile_name)
 
-        settings_output = spgu.read_output_configuration( self.simulation.command )
+        settings_output = spgu.read_output_configuration(self.simulation.command)
         self.output_columns = [_ for _ in settings_output.keys()]
 
         self.constants = {}
@@ -214,14 +213,15 @@ class SPGDataLoader(BaseDataLoader):
             else:
                 self.constants[vn] = self.full_dataframe[vn].unique()[0]
 
-#        print spgu.load_configuration( "%s.input" % self.simulation.command.split(".")[0])
-
+        #        print spgu.load_configuration( "%s.input" % self.simulation.command.split(".")[0])
 
         try:
             self.settings = spgu.read_input_configuration(self.simulation.command)
         except:
             self.settings = spgu.SPGSettings()
-            spgu.newline_msg( "INF", "no 'input' file found: %s"%self.simulation.command)
+            spgu.newline_msg(
+                "INF", "no 'input' file found: %s" % self.simulation.command
+            )
         self.settings.update(settings_output)
         try:
             self.coalesced_vars = [self.variables[-2]]
@@ -235,33 +235,44 @@ class SPGDataLoader(BaseDataLoader):
 
         self.independent_var = self.variables[-1]
 
-        x_axis_iter = self.simulation.data[ self.simulation.position_of(self.independent_var)]
+        x_axis_iter = self.simulation.data[
+            self.simulation.position_of(self.independent_var)
+        ]
         if self.independent_var not in self.settings:
-            self.settings[ self.independent_var ] = spgu.SPGSettings()
+            self.settings[self.independent_var] = spgu.SPGSettings()
         if x_axis_iter.type == "*":
-            self.settings[self.independent_var]['scale'] = 'log'
-            self.settings[self.independent_var]['lim'] =  (x_axis_iter.xmin, x_axis_iter.xmax)
-
-
+            self.settings[self.independent_var]["scale"] = "log"
+            self.settings[self.independent_var]["lim"] = (
+                x_axis_iter.xmin,
+                x_axis_iter.xmax,
+            )
 
         self.data = self.full_dataframe[self.variables + self.output_columns]
 
-        print("[__init__] constants: %s"% list(self.constants.keys()))
-        print("[__init__] independent variables:", self.separated_vars, self.coalesced_vars, self.independent_var)
-        print("[__init__] output columns: %s"% self.output_columns)
+        print("[__init__] constants: %s" % list(self.constants.keys()))
+        print(
+            "[__init__] independent variables:",
+            self.separated_vars,
+            self.coalesced_vars,
+            self.independent_var,
+        )
+        print("[__init__] output columns: %s" % self.output_columns)
 
-
-    def configure_vars(self, separated_vars, coalesced_vars, independent_var = None):
+    def configure_vars(self, separated_vars, coalesced_vars, independent_var=None):
 
         all_vars = separated_vars + coalesced_vars
         if independent_var is not None:
-            all_vars.append( independent_var )
+            all_vars.append(independent_var)
 
         # No unknown columns are present
         try:
-            assert len(set(all_vars) - set(self.data.keys() )) == 0
+            assert len(set(all_vars) - set(self.data.keys())) == 0
         except:
-            print("[configure_vars] ", set(all_vars) - set(self.data.keys() ), "not recognised as column name")
+            print(
+                "[configure_vars] ",
+                set(all_vars) - set(self.data.keys()),
+                "not recognised as column name",
+            )
             return
         # All sets are disjoint
         try:
@@ -286,256 +297,271 @@ class SPGDataLoader(BaseDataLoader):
 
         self.variables = all_vars
 
+
 #        self.output_columns = [kn for kn in self.data.keys() if kn not in self.variables]
 
-        #self.__initialise_independent_elements()
+# self.__initialise_independent_elements()
 
 
 #########################################################################################
 #########################################################################################
 class SPGInteractivePlotter:
 
-        colors = ['black', 'blue', 'green', 'red', 'yellow', 'brown', 'grey', 'violet']
-        markers = mpll.Line2D.filled_markers
+    colors = ["black", "blue", "green", "red", "yellow", "brown", "grey", "violet"]
+    markers = mpll.Line2D.filled_markers
 
-        def __init__(self, splotter, xscale = 'linear', yscale = 'linear'):
-            # self.splotter = splotter
+    def __init__(self, splotter, xscale="linear", yscale="linear"):
+        # self.splotter = splotter
 
-            self.full_data = splotter.data
+        self.full_data = splotter.data
 
-            self.separated_vars = splotter.separated_vars
-            self.separated_values = splotter.get_separated_values()
-            self.separated_selection = self.separated_values[0]
+        self.separated_vars = splotter.separated_vars
+        self.separated_values = splotter.get_separated_values()
+        self.separated_selection = self.separated_values[0]
 
-            self.coalesced_vars = splotter.coalesced_vars
-            self.coalesced_values = splotter.get_coalesced_values()
+        self.coalesced_vars = splotter.coalesced_vars
+        self.coalesced_values = splotter.get_coalesced_values()
 
+        self.output_columns = splotter.output_columns
+        self.dependent_var = self.output_columns[0]
 
-            self.output_columns = splotter.output_columns
-            self.dependent_var = self.output_columns[0]
+        self.independent_var = splotter.independent_var
+        self.figure, self.axis = plt.subplots(1, 1, figsize=(12, 6))
 
-            self.independent_var = splotter.independent_var
-            self.figure, self.axis = plt.subplots(1, 1, figsize=(12, 6))
+        self.settings = splotter.settings
 
-            self.settings = splotter.settings
+        if len(self.separated_vars) == 0:
+            vec_labels = ["all values"]
+        else:
+            vec_labels = [(", ".join(map(str, ou)), ou) for ou in self.separated_values]
+        #            print vec_labels
+        self.dd_filter = ipyw.Dropdown(options=vec_labels)  # ,
+        # description = "%s :"%(self.separated_vars) )
+        self.dd_output = ipyw.Dropdown(options=self.output_columns)  # ,
 
-            if len(self.separated_vars) == 0:
-                vec_labels = ["all values"]
+        self.select_xscale = ipyw.Checkbox(
+            value=xscale == "log", description="x log scale", icon="check"
+        )
+
+        self.select_yscale = ipyw.Checkbox(
+            value=yscale == "log", description="y log scale", icon="check"
+        )
+
+        # description = "Output columns: ")
+
+        self.xscale = xscale
+        self.yscale = yscale
+
+        self.dd_filter.observe(self.on_dd_filter_value_change, names="value")
+        self.dd_output.observe(self.on_dd_output_value_change, names="value")
+
+        self.select_yscale.observe(self.on_select_scale, names=["value", "owner"])
+        self.select_xscale.observe(self.on_select_scale, names=["value", "owner"])
+
+        self.__separated_value_change()
+        display(
+            ipyw.HBox(
+                [
+                    ipyw.HBox(
+                        [ipyw.Label("%s: " % (self.separated_vars)), self.dd_filter]
+                    ),
+                    ipyw.HBox([ipyw.Label("Output columns: "), self.dd_output]),
+                ]
+            ),
+            ipyw.HBox([self.select_xscale, self.select_yscale]),
+        )
+        self.draw()
+
+    def __separated_value_change(self):
+        query_str = " & ".join(
+            ["(%s==%s)" % i for i in zip(self.separated_vars, self.separated_values)]
+        )
+        # print query_str
+        if len(query_str) > 0:
+            self.data = self.full_data.query(query_str)
+        else:
+            self.data = self.full_data
+
+    def on_select_scale(self, change):
+
+        mpl.rcParams["text.usetex"] = "false"
+        #     if not change.has_key('new'): return
+        if change["owner"] == self.select_xscale:
+            self.xscale = "log" if change["new"] else "linear"
+            # print xscale
+            self.axis.set_xscale(self.xscale)
+        if change["owner"] == self.select_yscale:
+            self.yscale = "log" if change["new"] else "linear"
+            self.axis.set_yscale(self.yscale)
+        self.__recalculate_lims()
+        self.axis.figure.canvas.draw()
+
+    def on_dd_filter_value_change(self, change):
+        self.separated_values = change["new"]
+        self.__separated_value_change()
+        self.redraw()
+
+    def on_dd_output_value_change(self, change):
+        self.dependent_var = change["new"]
+
+        self.redraw()
+
+    def redraw(self):
+
+        mpl.rcParams["text.usetex"] = "false"
+        itertools.cycle(self.colors)
+        itertools.cycle(self.markers)
+
+        for ix, iv in enumerate(self.coalesced_values):
+            query_inn_str = " & ".join(
+                ["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)]
+            )
+            if len(query_inn_str) > 0:
+                local_df = self.data.query(query_inn_str)
             else:
-                vec_labels = [(", ".join(map(str, ou)), ou) for ou in self.separated_values]
-#            print vec_labels
-            self.dd_filter = ipyw.Dropdown(
-                options=vec_labels)  # ,
-            # description = "%s :"%(self.separated_vars) )
-            self.dd_output = ipyw.Dropdown(
-                options=self.output_columns)  # ,
+                local_df = self.data
 
-            self.select_xscale = ipyw.Checkbox(
-                value= xscale == "log",
-                description='x log scale',
-                icon='check'
+            self.axis.lines[ix].set_data(
+                local_df[self.independent_var], local_df[self.dependent_var]
             )
 
-            self.select_yscale = ipyw.Checkbox(
-                value= yscale == "log",
-                description='y log scale',
-                icon='check'
+        self.axis.set_xlabel(self.independent_var)
+        self.axis.set_ylabel(self.dependent_var)
+        self.__recalculate_lims()
+
+        self.axis.figure.canvas.draw()
+
+    def draw(self):
+
+        mpl.rcParams["text.usetex"] = "false"
+        color_it = itertools.cycle(self.colors)
+        marker_it = itertools.cycle(self.markers)
+        for iv in self.coalesced_values:
+            query_inn_str = " & ".join(
+                ["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)]
             )
 
-            # description = "Output columns: ")
-
-            self.xscale = xscale
-            self.yscale = yscale
-
-            self.dd_filter.observe(self.on_dd_filter_value_change, names='value')
-            self.dd_output.observe(self.on_dd_output_value_change, names='value')
-
-            self.select_yscale.observe(self.on_select_scale, names=['value', 'owner'])
-            self.select_xscale.observe(self.on_select_scale, names=['value', 'owner'])
-
-            self.__separated_value_change()
-            display(
-                ipyw.HBox([
-                    ipyw.HBox([ipyw.Label("%s: " % (self.separated_vars)), self.dd_filter]),
-                    ipyw.HBox([ipyw.Label("Output columns: "), self.dd_output])
-                ]),
-                ipyw.HBox([self.select_xscale, self.select_yscale])
+            if len(query_inn_str) > 0:
+                local_df = self.data.query(query_inn_str)
+            else:
+                local_df = self.data
+            #                print query_inn_str
+            self.axis.plot(
+                local_df[self.independent_var],
+                local_df[self.dependent_var],
+                linestyle="",
+                marker=next(marker_it),
+                color=next(color_it),
+                label=query_inn_str,
             )
-            self.draw()
 
-        def __separated_value_change(self):
-            query_str = " & ".join(["(%s==%s)" % i for i in zip(self.separated_vars, self.separated_values)])
-            #print query_str
-            if len(query_str) > 0:
-                self.data = self.full_data.query(query_str)
+        #            self.axis.set_ylim(min(self.data[self.dependent_var]), max(self.data[self.dependent_var]))
+        #            self.axis.set_xlim(min(self.data[self.independent_var]), max(self.data[self.independent_var]))
+        self.axis.set_xlabel(self.independent_var)
+        self.axis.set_ylabel(self.dependent_var)
+
+        box = self.axis.get_position()
+        self.axis.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+        self.axis.legend(loc="upper right")  # , bbox_to_anchor=(1, 0.5))
+
+        self.__recalculate_lims()
+
+        self.axis.figure.canvas.draw()
+
+    def savefig(self, filename, draw_legend=True):
+        mpl_rcParams = mpl.rcParams.copy()
+
+        spgp.init_mpl()
+        mpl.rcParams["text.usetex"] = "True"
+
+        fig_out, axis_out = plt.subplots(1, 1, figsize=(8, 4))
+
+        color_it = itertools.cycle(self.colors)
+        marker_it = itertools.cycle(self.markers)
+        for iv in self.coalesced_values:
+            query_inn_str = " & ".join(
+                ["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)]
+            )
+            if len(query_inn_str) > 0:
+                local_df = self.data.query(query_inn_str)
             else:
-                self.data = self.full_data
+                local_df = self.data
+            label_str = ", ".join(["%s=%s" % i for i in zip(self.coalesced_vars, iv)])
+            axis_out.plot(
+                local_df[self.independent_var],
+                local_df[self.dependent_var],
+                linestyle="",
+                marker=next(marker_it),
+                color=next(color_it),
+                label=label_str.replace("_", " "),
+            )
+        #     print label_str
 
-        def on_select_scale(self, change):
+        self.__recalculate_lims(axis_out)
+        axis_out.tick_params()
 
-            mpl.rcParams['text.usetex'] = 'false'
-            #     if not change.has_key('new'): return
-            if change['owner'] == self.select_xscale:
-                self.xscale = "log" if change['new'] else "linear"
-                #print xscale
-                self.axis.set_xscale(self.xscale)
-            if change['owner'] == self.select_yscale:
-                self.yscale = "log" if change['new'] else "linear"
-                self.axis.set_yscale(self.yscale)
-            self.__recalculate_lims()
-            self.axis.figure.canvas.draw()
+        if "label" in self.settings[self.independent_var]:
+            xlabel = self.settings[self.independent_var]["label"]
+        else:
+            xlabel = self.independent_var.replace("_", " ")
 
-        def on_dd_filter_value_change(self, change):
-            self.separated_values = change['new']
-            self.__separated_value_change()
-            self.redraw()
+        if "label" in self.settings[self.dependent_var]:
+            ylabel = self.settings[self.dependent_var]["label"]
+        else:
+            ylabel = self.dependent_var.replace("_", " ")
 
-        def on_dd_output_value_change(self, change):
-            self.dependent_var = change['new']
+        # print xlabel, ylabel
 
-            self.redraw()
+        axis_out.set_xlabel(xlabel)
+        axis_out.set_ylabel(ylabel)
 
-        def redraw(self):
-
-
-            mpl.rcParams['text.usetex'] = 'false'
-            color_it = itertools.cycle(self.colors)
-            marker_it = itertools.cycle(self.markers)
-
-            for ix, iv in enumerate(self.coalesced_values):
-                query_inn_str = " & ".join(["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)])
-                if len(query_inn_str) > 0:
-                    local_df = self.data.query(query_inn_str)
-                else:
-                    local_df = self.data
-
-                self.axis.lines[ix].set_data(local_df[self.independent_var], local_df[self.dependent_var])
-
-            self.axis.set_xlabel(self.independent_var)
-            self.axis.set_ylabel(self.dependent_var)
-            self.__recalculate_lims()
-
-
-            self.axis.figure.canvas.draw()
-
-        def draw(self):
-
-            mpl.rcParams['text.usetex'] = 'false'
-            color_it = itertools.cycle(self.colors)
-            marker_it = itertools.cycle(self.markers)
-            for iv in self.coalesced_values:
-                query_inn_str = " & ".join(["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)])
-
-                if len(query_inn_str) > 0:
-                    local_df = self.data.query(query_inn_str)
-                else:
-                    local_df = self.data
-#                print query_inn_str
-                self.axis.plot(local_df[self.independent_var], local_df[self.dependent_var],
-                               linestyle='', marker=next(marker_it), color=next(color_it),
-                               label=query_inn_str)
-
-#            self.axis.set_ylim(min(self.data[self.dependent_var]), max(self.data[self.dependent_var]))
-#            self.axis.set_xlim(min(self.data[self.independent_var]), max(self.data[self.independent_var]))
-            self.axis.set_xlabel(self.independent_var)
-            self.axis.set_ylabel(self.dependent_var)
-
-            box = self.axis.get_position()
-            self.axis.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-            self.axis.legend(loc='upper right' ) #, bbox_to_anchor=(1, 0.5))
-
-            self.__recalculate_lims()
-
-            self.axis.figure.canvas.draw()
-
-        def savefig(self, filename, draw_legend = True):
-            mpl_rcParams = mpl.rcParams.copy()
-
-            spgp.init_mpl()
-            mpl.rcParams['text.usetex'] = 'True'
-
-            fig_out, axis_out = plt.subplots(1, 1, figsize=(8, 4))
-
-            color_it = itertools.cycle(self.colors)
-            marker_it = itertools.cycle(self.markers)
-            for iv in self.coalesced_values:
-                query_inn_str = " & ".join(["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)])
-                if len(query_inn_str) > 0:
-                    local_df = self.data.query(query_inn_str)
-                else:
-                    local_df = self.data
-                label_str = ", ".join(["%s=%s" % i for i in zip(self.coalesced_vars, iv)])
-                axis_out.plot(local_df[self.independent_var], local_df[self.dependent_var],
-                               linestyle='', marker=next(marker_it), color=next(color_it),
-                               label=label_str.replace("_", " "))
-           #     print label_str
-
-            self.__recalculate_lims(axis_out)
-            axis_out.tick_params()
-
-            if "label" in self.settings[self.independent_var]:
-                xlabel = self.settings[self.independent_var]["label"]
-            else:
-                xlabel = self.independent_var.replace("_"," ")
-
-            if "label" in self.settings[self.dependent_var]:
-                ylabel = self.settings[self.dependent_var]["label"]
-            else:
-                ylabel = self.dependent_var.replace("_"," ")
-
-            # print xlabel, ylabel
-
-            axis_out.set_xlabel(xlabel)
-            axis_out.set_ylabel(ylabel)
-
-
-            axis_out.set_xscale(self.xscale)
-            axis_out.set_yscale(self.yscale)
+        axis_out.set_xscale(self.xscale)
+        axis_out.set_yscale(self.yscale)
 
         ###    axis_out.set_title(
         ###        ", ".join([" %s=%s".replace("_", " ") % i for i in zip(self.separated_vars, self.separated_values)]),
         ###        axis_font)
-            title = ", ".join([" %s=%s" % i for i in zip(self.separated_vars, self.separated_values)])
-            title = title.replace("_", " ")
+        title = ", ".join(
+            [" %s=%s" % i for i in zip(self.separated_vars, self.separated_values)]
+        )
+        title = title.replace("_", " ")
 
-            axis_out.set_title(title)
+        axis_out.set_title(title)
 
-            box = axis_out.get_position()
-            axis_out.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-            if draw_legend:
-                axis_out.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        box = axis_out.get_position()
+        axis_out.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+        if draw_legend:
+            axis_out.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
-            axis_out.figure.canvas.draw()
-            fig_out.savefig(filename, bbox_inches='tight',
-                            transparent=True,
-                            pad_inches=0)
+        axis_out.figure.canvas.draw()
+        fig_out.savefig(filename, bbox_inches="tight", transparent=True, pad_inches=0)
 
-            mpl.rcParams = mpl_rcParams
+        mpl.rcParams = mpl_rcParams
 
-        def __recalculate_lims(self, axis_out = None):
-            ydata = self.data[self.dependent_var]
-            xdata = self.data[self.independent_var]
-            if self.select_yscale.value:  # it is not log
-                ydata = ydata[ydata > 1e-9]
+    def __recalculate_lims(self, axis_out=None):
+        ydata = self.data[self.dependent_var]
+        xdata = self.data[self.independent_var]
+        if self.select_yscale.value:  # it is not log
+            ydata = ydata[ydata > 1e-9]
 
-#            print ydata
+        #            print ydata
 
-            ymin, ymax = 0.9*np.min(ydata), 1.1*np.max(ydata)
-            if self.select_xscale.value:  # it is not log
-                xdata = xdata[xdata > 1e-9]
-            xmin, xmax = 0.9*np.min(xdata), 1.1*np.max(xdata)
+        ymin, ymax = 0.9 * np.min(ydata), 1.1 * np.max(ydata)
+        if self.select_xscale.value:  # it is not log
+            xdata = xdata[xdata > 1e-9]
+        xmin, xmax = 0.9 * np.min(xdata), 1.1 * np.max(xdata)
 
-            self.axis.set_xscale(self.xscale)
-            self.axis.set_yscale(self.yscale)
+        self.axis.set_xscale(self.xscale)
+        self.axis.set_yscale(self.yscale)
 
-            if axis_out:
-                axis_out.set_ylim(ymin, ymax)
-                axis_out.set_xlim(xmin, xmax)
+        if axis_out:
+            axis_out.set_ylim(ymin, ymax)
+            axis_out.set_xlim(xmin, xmax)
 
-            else:
+        else:
 
-                self.axis.set_ylim(ymin, ymax)
-                self.axis.set_xlim(xmin, xmax)
+            self.axis.set_ylim(ymin, ymax)
+            self.axis.set_xlim(xmin, xmax)
 
 
 #########################################################################################
@@ -544,11 +570,10 @@ class SPGInteractivePlotter:
 #########################################################################################
 #########################################################################################
 #########################################################################################
-
 
 
 class SPGInteractiveScalingPlotter:
-    colors = ['black', 'blue', 'green', 'red', 'yellow', 'brown', 'grey', 'violet']
+    colors = ["black", "blue", "green", "red", "yellow", "brown", "grey", "violet"]
     markers = mpll.Line2D.filled_markers
 
     def __init__(self, splotter):
@@ -567,7 +592,9 @@ class SPGInteractiveScalingPlotter:
         self.independent_var = splotter.independent_var
 
         self.constants = splotter.constants
-        self.variables = [ i for i in list(self.full_data.keys()) if i not in self.constants ]
+        self.variables = [
+            i for i in list(self.full_data.keys()) if i not in self.constants
+        ]
 
         self.settings = splotter.settings
 
@@ -576,27 +603,22 @@ class SPGInteractiveScalingPlotter:
         else:
             vec_labels = [(", ".join(map(str, ou)), ou) for ou in self.separated_values]
 
-        self.dd_filter = ipyw.Dropdown(
-            options=vec_labels)
+        self.dd_filter = ipyw.Dropdown(options=vec_labels)
 
         self.select_xscale = ipyw.Checkbox(
-            value=False,
-            description='x log scale',
-            icon='check'
+            value=False, description="x log scale", icon="check"
         )
 
         self.select_yscale = ipyw.Checkbox(
-            value=False,
-            description='y log scale',
-            icon='check'
+            value=False, description="y log scale", icon="check"
         )
 
         # description = "Output columns: ")
 
-        self.dd_filter.observe(self.on_dd_filter_value_change, names='value')
+        self.dd_filter.observe(self.on_dd_filter_value_change, names="value")
 
-        self.select_yscale.observe(self.on_select_scale, names=['value', 'owner'])
-        self.select_xscale.observe(self.on_select_scale, names=['value', 'owner'])
+        self.select_yscale.observe(self.on_select_scale, names=["value", "owner"])
+        self.select_xscale.observe(self.on_select_scale, names=["value", "owner"])
 
         self.__separated_value_change()
         self.__scaling_parameters = {}
@@ -611,18 +633,28 @@ class SPGInteractiveScalingPlotter:
         for sp in sorted(self.__scaling_parameters.keys()):
             (value, value_min, value_max, step) = self.__scaling_parameters[sp]
             vec_row2.append(ipyw.Label("%s: " % (sp)))
-            new_slider = ipyw.FloatSlider(value=value, min=value_min, max=value_max, step=step)
+            new_slider = ipyw.FloatSlider(
+                value=value, min=value_min, max=value_max, step=step
+            )
 
             vec_row2.append(new_slider)
             self.__scaling_widgets[new_slider] = sp
-            new_slider.observe(self.on_slider_change, names=['value'])
+            new_slider.observe(self.on_slider_change, names=["value"])
 
         display(
-            ipyw.VBox([
-                ipyw.HBox([ipyw.Label("%s: " % (self.separated_vars)), self.dd_filter, self.select_xscale,
-                           self.select_yscale]),
-                ipyw.HBox(vec_row2)
-            ])
+            ipyw.VBox(
+                [
+                    ipyw.HBox(
+                        [
+                            ipyw.Label("%s: " % (self.separated_vars)),
+                            self.dd_filter,
+                            self.select_xscale,
+                            self.select_yscale,
+                        ]
+                    ),
+                    ipyw.HBox(vec_row2),
+                ]
+            )
         )
 
         self.figure, self.axis = plt.subplots(1, 1, figsize=(8, 4))
@@ -632,20 +664,19 @@ class SPGInteractiveScalingPlotter:
 
     def __separated_value_change(self):
 
-        query_str = " & ".join(["(%s==%s)" % i for i in zip(self.separated_vars, self.separated_values)])
+        query_str = " & ".join(
+            ["(%s==%s)" % i for i in zip(self.separated_vars, self.separated_values)]
+        )
         if len(query_str) > 0:
             self.data = self.full_data.query(query_str)
         else:
             self.data = self.full_data.copy()
 
-
-        self.data = self.data[ sorted( set(self.variables + self.output_columns) )]
-
-
+        self.data = self.data[sorted(set(self.variables + self.output_columns))]
 
     def on_slider_change(self, change):
-        par_name = self.__scaling_widgets[change['owner']]
-        self.scaling_values[par_name] = change['new']
+        par_name = self.__scaling_widgets[change["owner"]]
+        self.scaling_values[par_name] = change["new"]
         self.transform_data()
 
         # print self.scaling_values, self.evaluate_string(self.x_transform), self.evaluate_string(self.y_transform)
@@ -653,43 +684,46 @@ class SPGInteractiveScalingPlotter:
 
     def on_select_scale(self, change):
 
-        if change['owner'] == self.select_xscale:
-            self.xscale = "log" if change['new'] else "linear"
+        if change["owner"] == self.select_xscale:
+            self.xscale = "log" if change["new"] else "linear"
 
             self.axis.set_xscale(self.xscale)
-        if change['owner'] == self.select_yscale:
-            self.yscale = "log" if change['new'] else "linear"
+        if change["owner"] == self.select_yscale:
+            self.yscale = "log" if change["new"] else "linear"
             self.axis.set_yscale(self.yscale)
 
         self.axis.figure.canvas.draw()
 
     def on_dd_filter_value_change(self, change):
 
-        self.separated_values = change['new']
+        self.separated_values = change["new"]
         self.__separated_value_change()
         self.redraw()
 
     def evaluate_string(self, to_evaluate):
         res = to_evaluate
         for i_var in self.constants:
-            res = re.sub(r'\{%s\}' % i_var, str(self.constants[i_var]), res)
+            res = re.sub(r"\{%s\}" % i_var, str(self.constants[i_var]), res)
 
         for i_var in self.scaling_values:
-            res = re.sub(r'\{%s\}' % i_var, str(self.scaling_values[i_var]), res)
+            res = re.sub(r"\{%s\}" % i_var, str(self.scaling_values[i_var]), res)
 
         for i_var in self.variables:
-            res = re.sub(r'\{%s\}' % i_var, "self.data['%s']" % i_var, res)
-
-
+            res = re.sub(r"\{%s\}" % i_var, "self.data['%s']" % i_var, res)
 
         return eval(res)
 
     def setup_transforms(self, xt, yt):
-        rx = re.compile(r'\{([a-zA-Z0-9_]\w*)\}')
+        rx = re.compile(r"\{([a-zA-Z0-9_]\w*)\}")
         vars_in_x_expr = rx.findall(xt)
         vars_in_y_expr = rx.findall(yt)
-        possible_keys = list(self.constants.keys()) + self.variables + self.output_columns + list(self.__scaling_parameters.keys())
-#        print possible_keys
+        possible_keys = (
+            list(self.constants.keys())
+            + self.variables
+            + self.output_columns
+            + list(self.__scaling_parameters.keys())
+        )
+        #        print possible_keys
 
         assert len(set(vars_in_x_expr) - set(possible_keys)) == 0
         assert len(set(vars_in_y_expr) - set(possible_keys)) == 0
@@ -697,32 +731,38 @@ class SPGInteractiveScalingPlotter:
         self.x_transform = xt
         self.y_transform = yt
 
-    def add_scaling_parameter(self, parameter_name, value, value_min=0., value_max=None, step=0.01):
+    def add_scaling_parameter(
+        self, parameter_name, value, value_min=0.0, value_max=None, step=0.01
+    ):
         if value_max is None:
-            value_max = 2. * value
+            value_max = 2.0 * value
 
         self.__scaling_parameters[parameter_name] = (value, value_min, value_max, step)
         self.scaling_values[parameter_name] = value
 
     def transform_data(self):
         self.data_transformed = self.data.copy()
-#        print self.x_transform, self.y_transform
+        #        print self.x_transform, self.y_transform
 
-        self.data_transformed['transformed_x'] = self.evaluate_string(self.x_transform)
-        self.data_transformed['transformed_y'] = self.evaluate_string(self.y_transform)
+        self.data_transformed["transformed_x"] = self.evaluate_string(self.x_transform)
+        self.data_transformed["transformed_y"] = self.evaluate_string(self.y_transform)
 
     def redraw(self):
-        color_it = itertools.cycle(self.colors)
-        marker_it = itertools.cycle(self.markers)
+        itertools.cycle(self.colors)
+        itertools.cycle(self.markers)
 
         for ix, iv in enumerate(self.coalesced_values):
-            query_inn_str = " & ".join(["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)])
+            query_inn_str = " & ".join(
+                ["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)]
+            )
             if len(query_inn_str) > 0:
                 local_df = self.data_transformed.query(query_inn_str)
             else:
                 local_df = self.data_transformed
 
-            self.axis.lines[ix].set_data(local_df['transformed_x'], local_df['transformed_y'])
+            self.axis.lines[ix].set_data(
+                local_df["transformed_x"], local_df["transformed_y"]
+            )
 
         self.__recalculate_lims()
 
@@ -733,55 +773,70 @@ class SPGInteractiveScalingPlotter:
         color_it = itertools.cycle(self.colors)
         marker_it = itertools.cycle(self.markers)
         for iv in self.coalesced_values:
-            query_inn_str = " & ".join(["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)])
+            query_inn_str = " & ".join(
+                ["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)]
+            )
             if len(query_inn_str) > 0:
                 local_df = self.data_transformed.query(query_inn_str)
             else:
                 local_df = self.data_transformed
-            self.axis.plot(local_df['transformed_x'], local_df['transformed_y'],
-                           linestyle='', marker=next(marker_it), color=next(color_it),
-                           label=query_inn_str)
+            self.axis.plot(
+                local_df["transformed_x"],
+                local_df["transformed_y"],
+                linestyle="",
+                marker=next(marker_it),
+                color=next(color_it),
+                label=query_inn_str,
+            )
 
         self.__recalculate_lims()
-        self.axis.set_xlabel('transformed_x')
-        self.axis.set_ylabel('transformed_y')
+        self.axis.set_xlabel("transformed_x")
+        self.axis.set_ylabel("transformed_y")
 
         box = self.axis.get_position()
         self.axis.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-        self.axis.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        self.axis.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
         self.axis.figure.canvas.draw()
 
+    def savefig(self, filename, xlabel, ylabel, draw_legend=True):
 
-    def savefig(self, filename, xlabel, ylabel, draw_legend = True):
-
-#        spgp.init_mpl()
+        #        spgp.init_mpl()
 
         fig_out, axis_out = plt.subplots(1, 1, figsize=(12, 6))
 
         color_it = itertools.cycle(self.colors)
         marker_it = itertools.cycle(self.markers)
         for iv in self.coalesced_values:
-            query_inn_str = " & ".join(["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)])
+            query_inn_str = " & ".join(
+                ["(%s==%s)" % i for i in zip(self.coalesced_vars, iv)]
+            )
             if len(query_inn_str) > 0:
                 local_df = self.data_transformed.query(query_inn_str)
             else:
                 local_df = self.data_transformed
 
             label_str = ", ".join(["%s=%s" % i for i in zip(self.coalesced_vars, iv)])
-            axis_out.plot(local_df['transformed_x'], local_df['transformed_y'],
-                           linestyle='', marker=next(marker_it), color=next(color_it),
-                           label=label_str.replace("_"," "))
+            axis_out.plot(
+                local_df["transformed_x"],
+                local_df["transformed_y"],
+                linestyle="",
+                marker=next(marker_it),
+                color=next(color_it),
+                label=label_str.replace("_", " "),
+            )
 
         self.__recalculate_lims(axis_out)
-#        axis_out.tick_params(labelsize=axis_font["size"] - 6)
+        #        axis_out.tick_params(labelsize=axis_font["size"] - 6)
 
         axis_out.set_xlabel(xlabel)
         axis_out.set_ylabel(ylabel)
 
         axis_out.set_xscale(self.xscale)
         axis_out.set_yscale(self.yscale)
-        title = ", ".join([" %s=%s" % i for i in zip(self.separated_vars, self.separated_values)])
+        title = ", ".join(
+            [" %s=%s" % i for i in zip(self.separated_vars, self.separated_values)]
+        )
         title = title.replace("_", " ")
 
         axis_out.set_title(title)
@@ -789,17 +844,14 @@ class SPGInteractiveScalingPlotter:
         box = axis_out.get_position()
         axis_out.set_position([box.x0, box.y0, box.width * 0.8, box.height])
         if draw_legend:
-            axis_out.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+            axis_out.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
         axis_out.figure.canvas.draw()
-        fig_out.savefig( filename,  bbox_inches='tight',
-               transparent=True,
-               pad_inches=0 )
+        fig_out.savefig(filename, bbox_inches="tight", transparent=True, pad_inches=0)
 
-
-    def __recalculate_lims(self, axis_out = None):
-        ydata = self.data_transformed['transformed_y']
-        xdata = self.data_transformed['transformed_x']
+    def __recalculate_lims(self, axis_out=None):
+        ydata = self.data_transformed["transformed_y"]
+        xdata = self.data_transformed["transformed_x"]
         if self.select_yscale.value:  # it is not log
             ydata = ydata[ydata > 0]
         ymin, ymax = 0.9 * min(ydata), 1.1 * max(ydata)
@@ -816,20 +868,12 @@ class SPGInteractiveScalingPlotter:
             self.axis.set_ylim(ymin, ymax)
             self.axis.set_xlim(xmin, xmax)
 
+
 #########################################################################################
 #########################################################################################
 #########################################################################################
 #########################################################################################
 #########################################################################################
-
-
-
-
-
-
-
-
-
 
 
 #########################################################################################

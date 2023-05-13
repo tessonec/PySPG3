@@ -1,6 +1,6 @@
-version_number   = '5.0.0'
-database_version = '2.0'
-release_date = '04 Dec 2020'
+version_number = "5.0.0"
+database_version = "2.0"
+release_date = "04 Dec 2020"
 
 import os.path
 
@@ -9,14 +9,14 @@ from .base.parser import *
 from .runner.single import *
 from .simulation.simple import *
 
-#SPG_HOME = os.path.expanduser("~/opt/lib")
+# SPG_HOME = os.path.expanduser("~/opt/lib")
 
 
-#ROOT_DIR = os.path.expanduser("~/opt")
+# ROOT_DIR = os.path.expanduser("~/opt")
 
 CONFIG_DIR = os.path.expanduser("~/.pyspg")
-#VAR_PATH = os.path.abspath(CONFIG_DIR+"/spool")
-#BINARY_PATH = os.path.abspath(ROOT_DIR+"/bin")
+# VAR_PATH = os.path.abspath(CONFIG_DIR+"/spool")
+# BINARY_PATH = os.path.abspath(ROOT_DIR+"/bin")
 # RUN_DIR = os.path.expanduser("~/run")
 
 TIMEOUT = 120
@@ -32,5 +32,5 @@ class ValueContainer(dict):
     def __str__(self):
         ret = ":\n"
         for k in self.keys():
-            ret += "%s = %s\n" % (k, self[k])
+            ret += f"{k} = {self[k]}\n"
         return ret
